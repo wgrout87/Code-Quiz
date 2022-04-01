@@ -478,7 +478,6 @@ var challengeContent = document.querySelector("#challengeContent");
 var timeRemainingDisplay = document.querySelector("#timeRemaining");
 var currentCombo = document.querySelector("#currentCombo");
 var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier");
-var questionAnswers = document.querySelectorAll(".questionAnswer");
 // END QUERY SELECTORS
 
 // BEGIN GLOBAL VARIABLES
@@ -492,6 +491,10 @@ var quizAnswers = [];
 var currentQuestion = 0;
 var quizAnswersValues = [];
 var currentQuestionObj = null;
+var questionAnswer1 = null;
+var questionAnswer2 = null;
+var questionAnswer3 = null;
+var questionAnswer4 = null;
 // END GLOBAL VARIABLES
 
 var beginQuiz = function () {
@@ -519,6 +522,7 @@ var removeQuizContent = function () {
 }
 
 var addQuestion = function () {
+    console.log(quizAnswersValues);
     currentQuestionObj = questions[quizQuestions[currentQuestion]];
     var questionEl = document.createElement("p");
     questionEl.textContent = currentQuestionObj.question;
@@ -527,6 +531,7 @@ var addQuestion = function () {
     quizAnswersValues = [];
     addAnswers();
     currentQuestion++;
+    console.log(questionAnswer1);
 }
 
 var addAnswers = function () {
@@ -540,6 +545,11 @@ var addAnswers = function () {
         quizAnswersValues[i] = currentQuestionObj.answers[quizAnswers[i]].answerValue;
     }
     quiz.appendChild(fourAnswersEl);
+    console.log(quizAnswersValues);
+    questionAnswer1 = document.querySelector("button:nth-child(1)");
+    questionAnswer2 = document.querySelector("button:nth-child(2)");
+    questionAnswer3 = document.querySelector("button:nth-child(3)");
+    questionAnswer4 = document.querySelector("button:nth-child(4)");
 }
 
 // This function randomizes the order of the questions from the questions array
@@ -567,8 +577,19 @@ var randomizeAnswers = function () {
 };
 
 beginBtn.addEventListener("click", beginQuiz);
+
+// Adds an event listener to the entire quiz section, but only pays attention to questionAnswer class elements 
 quiz.addEventListener("click", function (clickedAnswer) {
-    if (clickedAnswer.target.className == "questionAnswer") {
-        console.log("clicked");
+    if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer1) {
+        console.log("1 clicked");
+    }
+    if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer2) {
+        console.log("2 clicked");
+    }
+    if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer3) {
+        console.log("3 clicked");
+    }
+    if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer4) {
+        console.log("4 clicked");
     }
 });
