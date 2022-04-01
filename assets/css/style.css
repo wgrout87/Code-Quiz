@@ -126,6 +126,7 @@ section {
     text-align: left;
     padding: 5px;
     border-radius: 5px;
+    word-spacing: 4px;
 }
 
 .quizSpace .quiz .quizAnswers button:hover {

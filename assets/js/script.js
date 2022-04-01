@@ -478,6 +478,7 @@ var challengeContent = document.querySelector("#challengeContent");
 var timeRemainingDisplay = document.querySelector("#timeRemaining");
 var currentCombo = document.querySelector("#currentCombo");
 var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier");
+var questionAnswers = document.querySelectorAll(".questionAnswer");
 // END QUERY SELECTORS
 
 // BEGIN GLOBAL VARIABLES
@@ -489,7 +490,7 @@ var quizQuestionsRemaining = 15;
 var quizQuestions = [];
 var quizAnswers = [];
 var currentQuestion = 0;
-var currentAnswer = 0;
+var quizAnswersValues = [];
 var currentQuestionObj = null;
 // END GLOBAL VARIABLES
 
@@ -504,7 +505,9 @@ var beginQuiz = function () {
     removeQuizContent();
     beginBtn.remove();
     randomizeQuestions();
-    addQuestion();
+    if (currentQuestion < 16) {
+        addQuestion();
+    }
 }
 
 var removeQuizContent = function () {
@@ -521,7 +524,9 @@ var addQuestion = function () {
     questionEl.textContent = currentQuestionObj.question;
     quiz.appendChild(questionEl);
     randomizeAnswers();
+    quizAnswersValues = [];
     addAnswers();
+    currentQuestion++;
 }
 
 var addAnswers = function () {
@@ -529,8 +534,10 @@ var addAnswers = function () {
     fourAnswersEl.className = "quizAnswers";
     for (i = 0; i < 4; i++) {
         var answerEl = document.createElement("button");
-        answerEl.textContent = (currentQuestionObj.answers[quizAnswers[i]].answerString);
+        answerEl.className = "questionAnswer";
+        answerEl.textContent = currentQuestionObj.answers[quizAnswers[i]].answerString;
         fourAnswersEl.appendChild(answerEl);
+        quizAnswersValues[i] = currentQuestionObj.answers[quizAnswers[i]].answerValue;
     }
     quiz.appendChild(fourAnswersEl);
 }
@@ -545,7 +552,6 @@ var randomizeQuestions = function () {
             quizQuestions.push(possibleQuestion);
         }
     }
-    console.log(quizQuestions);
 };
 
 // This function randomizes the order of the answers for the current question
@@ -558,7 +564,11 @@ var randomizeAnswers = function () {
             quizAnswers.push(possibleAnswer);
         }
     }
-    console.log(quizAnswers);
 };
 
 beginBtn.addEventListener("click", beginQuiz);
+quiz.addEventListener("click", function (clickedAnswer) {
+    if (clickedAnswer.target.className == "questionAnswer") {
+        console.log("clicked");
+    }
+});
