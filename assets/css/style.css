@@ -113,6 +113,26 @@ section {
     border-radius: 5px;
 }
 
+.quizSpace .quiz .quizAnswers {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.quizSpace .quiz .quizAnswers button {
+    margin: 20px;
+    font-size: 20px;
+    text-align: left;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.quizSpace .quiz .quizAnswers button:hover {
+    background-color: var(--font-color);
+    color: var(--background);
+}
+
 #timerBar {
     background-color: var(--font-color);
     height: 5px;
