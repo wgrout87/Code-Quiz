@@ -1,0 +1,141 @@
+/* Brings in Arcade Classic font family retrieved from https://www.cdnfonts.com/arcade-classic.font on April 1, 2022 */
+@import url('http://fonts.cdnfonts.com/css/arcade-classic');
+
+:root {
+    --background: #101111;
+    --font-color: #e9ebed;
+}
+
+/* For ease of sizing, border-box is established to include borders and padding any time a size is specified */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'ArcadeClassic', sans-serif;
+    color: var(--font-color);
+    background-color: var(--background);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    border-bottom: 5px solid var(--font-color);
+    margin: 0 40px;
+}
+
+header h1 {    
+    font-size: 72px;
+    padding: 10px 0;
+    word-spacing: 8px;
+}
+
+.highScore {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translate(0%, -50%);
+    width: 15%;
+}
+
+.record {
+    display: flex;
+    justify-content: space-between;
+    font-size: 32px;
+}
+
+.highScore a {
+    float: right;
+}
+
+section {
+    width: 800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.score {
+    width: 550px;
+    margin: 50px 0 20px 0;
+    border: 2px solid var(--font-color);
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 30px;
+    padding: 5px;
+    align-items: center;
+    opacity: 0;
+}
+
+.quizSpace {
+    width: 550px;
+    height: 400px;
+    padding: 5px;
+    border: 2px solid var(--font-color);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    word-spacing: 6px;
+}
+
+.quizSpace .quiz h2 {
+    font-size: 40px;
+    font-weight: normal;
+}
+
+.quizSpace .quiz p {
+    font-size: 20px;
+    line-height: 1.5;
+    word-spacing: 4px;
+}
+
+/* Remove button default styles */
+.quizSpace button {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;;
+}
+
+.quizSpace .beginBtn {
+    margin: 50px auto;
+    font-size: 40px;
+    padding: 5px;
+    border: 2px solid var(--font-color);
+    border-radius: 5px;
+}
+
+#timerBar {
+    background-color: var(--font-color);
+    height: 5px;
+    width: 550px;
+    margin-top: 20px;
+    opacity: 0;
+}
+
+.challengeContent {
+    float: right;
+    width: 230px;
+    margin-top: 50px;
+    opacity: 0;
+}
+
+.challengeContent div {
+    margin: 20px;
+    padding: 5px;
+    font-size: 30px;
+    border: 2px solid var(--font-color);
+    border-radius: 5px;
+}
+
+.challengeContent .timeRemaining {
+    margin-top: 68px;
+}

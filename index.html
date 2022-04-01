@@ -1,13 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Timed Code Quiz</title>
     <link rel="stylesheet" href="./assets/css/style.css" />
 </head>
+
 <body>
+    <!-- BEGIN HEADER -->
+    <header>
+        <h1 class="pageTitle">TIMED CODE QUIZ</h1>
+        <div class="highScore">
+            <p>CURRENT HIGHSCORE</p>
+            <div class="record">
+                <p class="hgihScoreInitials">WTG</p>
+                <p class="highScorePoints">12500</p>
+            </div>
+            <a>
+                VIEW THE SCOREBOARD
+            </a>
+        </div>
+    </header>
+    <!-- END HEADER -->
+
+    <!-- BEGIN QUIZ CONTENT -->
+    <section>
+        <div>
+            <div class="score" id="score">
+                <p>CURRENT SCORE:</p>
+                <p id="currentScore"></p>
+            </div>
+            <div class="quizSpace" id="quizSpace">
+                <div class="quiz" id="quiz">
+                    <h2>QUIZ EXPLANATION:</h2>
+                    <p>
+                        YOU WILL BE GIVEN 3 MINUTES TO ANSWER 15 QUESTIONS. INCORRECT ANSWERS WILL DEDUCT 3 SECONDS
+                        FROM YOUR REMAINING TIME. CORRECTLY ANSWERING QUESTIONS QUICKLY WILL BUILD A COMBO THAT WILL
+                        BOOST THE POINTS YOU RECEIVE FOR EACH CORRECT ANSWER. ANY REMAINING TIME AFTER ALL QUESTIONS
+                        HAVE
+                        BEEN ANSWER WILL BE CONVERTED TO ADDITIONAL POINTS.
+                    </p>
+                </div>
+                <div class="beginBtn" id="beginBtn">
+                    <button type="button">
+                        TAKE THE QUIZ
+                    </button>
+                </div>
+            </div>
+            <div id="timerBar"></div>
+        </div>
+        <div class="challengeContent" id="challengeContent">
+            <div class="timeRemaining">
+                <p>TIME REMAINING: <span id="timeRemaining"></span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    COMBO: <span id="currentCombo"></span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    POINTS MULTIPLIER: <span id="currentPointsMultiplier"></span>
+                </p>
+            </div>
+        </div>
+    </section>
+    <!-- END QUIZ CONTENT -->
     <script src="./assets/js/script.js"></script>
 </body>
+
 </html>

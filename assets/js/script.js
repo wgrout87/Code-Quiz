@@ -1,8 +1,12 @@
+// BEGIN QUESTIONS
+// Array of question objects
 var questions = [
     {
         question: "What is the correct syntax to close the <title> element?",
+        // Each question object contains answer objects
         answer1: {
             answerString: "</title>",
+            // This property is for identifying the correct answer
             answerValue: true
         },
         answer2: {
@@ -419,6 +423,48 @@ var questions = [
         }
     }
 ];
+// END QUESTIONS
 
-console.log(questions.length);
-console.log(questions[Math.floor(Math.random() * questions.length)].question);
+// BEGIN QUERY SELECTORS
+var score = document.querySelector("#score");
+var currentScoreDisplay = document.querySelector("#currentScore");
+var quiz = document.querySelector("#quizSpace");
+var quiz = document.querySelector("#quiz");
+var beginBtn = document.querySelector("#beginBtn");
+var timerBar = document.querySelector("#timerBar");
+var challengeContent = document.querySelector("#challengeContent");
+var timeRemainingDisplay = document.querySelector("#timeRemaining");
+var currentCombo = document.querySelector("#currentCombo");
+var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier");
+// END QUERY SELECTORS
+
+// BEGIN GLOBAL VARIABLES
+    var combo = 0;
+    var pointsMultiplier = "1.0";
+    var timeRemaining = 180;
+    var currentScore = 0;
+    var quizQuestionsRemaining = 15;
+// END GLOBAL VARIABLES
+
+var beginQuiz = function() {
+    score.style.opacity = "1";
+    timerBar.style.opacity = "1";
+    challengeContent.style.opacity = "1";
+    currentScoreDisplay.textContent = currentScore;
+    timeRemainingDisplay.textContent = timeRemaining;
+    currentCombo.textContent = combo;
+    currentPointsMultiplier.textContent = pointsMultiplier;
+    removeQuizContent();
+    beginBtn.remove();
+
+}
+
+var removeQuizContent = function() {
+    var child = quiz.lastElementChild;
+    while (child) {
+        quiz.removeChild(child);
+        child = quiz.lastElementChild;
+    }
+}
+
+beginBtn.addEventListener("click", beginQuiz);
