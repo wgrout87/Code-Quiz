@@ -471,6 +471,7 @@ var questions = [
 // BEGIN QUERY SELECTORS
 var score = document.querySelector("#score");
 var currentScoreDisplay = document.querySelector("#currentScore");
+var quizContent = document.querySelector("#quizContent");
 var quiz = document.querySelector("#quiz");
 var beginBtn = document.querySelector("#beginBtn");
 var timerBar = document.querySelector("#timerBar");
@@ -494,23 +495,29 @@ var questionAnswer1 = null;
 var questionAnswer2 = null;
 var questionAnswer3 = null;
 var questionAnswer4 = null;
+var timeoutID = null;
+var intervalID = null;
+var timerBarWidth = 550;
 // END GLOBAL VARIABLES
 
-// Changes display for the quiz elements, sets values within the display, and adds the first question
+// Changes display for the game elements, sets values within the display, and adds the first question
 var beginQuiz = function () {
+    // Reveals the game elements with a 1 sec transition duration
     score.style.opacity = "1";
     timerBar.style.opacity = "1";
     challengeContent.style.opacity = "1";
+    // Sets the game element read-outs
     currentScoreDisplay.textContent = currentScore;
     timeRemainingDisplay.textContent = timeRemaining;
     currentCombo.textContent = combo;
     currentPointsMultiplier.textContent = pointsMultiplier.toPrecision(2);
+    // Removes the quiz instructions
     removeQuizContent();
     beginBtn.remove();
+    // Randomly selects 15 questions from the questions array for this quiz
     randomizeQuestions();
-    if (currentQuestion < 16) {
-        addQuestion();
-    }
+    // Adds the first question
+    addQuestion();
 }
 
 // Removes the content of the quiz div
@@ -520,41 +527,7 @@ var removeQuizContent = function () {
         quiz.removeChild(child);
         child = quiz.lastElementChild;
     }
-}
-
-// Adds a question to the quiz div
-var addQuestion = function () {
-    if (currentQuestion < 15) {
-        console.log(quizAnswersValues);
-        currentQuestionObj = questions[quizQuestions[currentQuestion]];
-        var questionEl = document.createElement("p");
-        questionEl.textContent = currentQuestionObj.question;
-        quiz.appendChild(questionEl);
-        randomizeAnswers();
-        quizAnswersValues = [];
-        addAnswers();
-        currentQuestion++;
-    }
-}
-
-// Adds answers to the quiz div
-var addAnswers = function () {
-    var fourAnswersEl = document.createElement("div");
-    fourAnswersEl.className = "quizAnswers";
-    for (i = 0; i < 4; i++) {
-        var answerEl = document.createElement("button");
-        answerEl.className = "questionAnswer";
-        answerEl.textContent = currentQuestionObj.answers[quizAnswers[i]].answerString;
-        fourAnswersEl.appendChild(answerEl);
-        quizAnswersValues[i] = currentQuestionObj.answers[quizAnswers[i]].answerValue;
-    }
-    quiz.appendChild(fourAnswersEl);
-    console.log(quizAnswersValues);
-    questionAnswer1 = document.querySelector("button:nth-child(1)");
-    questionAnswer2 = document.querySelector("button:nth-child(2)");
-    questionAnswer3 = document.querySelector("button:nth-child(3)");
-    questionAnswer4 = document.querySelector("button:nth-child(4)");
-}
+};
 
 // This function randomizes the order of the questions from the questions array
 var randomizeQuestions = function () {
@@ -567,6 +540,57 @@ var randomizeQuestions = function () {
         }
     }
 };
+
+// Adds a question to the quiz div
+var addQuestion = function () {
+    // Only 15 questions will be chosen per quiz
+    if (currentQuestion < 15) {
+        console.log(quizAnswersValues);
+        // The question object selected from the questions array is referenced here
+        currentQuestionObj = questions[quizQuestions[currentQuestion]];
+        // HTML elements are created referencing the question object properties and added into the DOM
+        var questionEl = document.createElement("p");
+        questionEl.className = "question";
+        questionEl.textContent = currentQuestionObj.question;
+        quiz.appendChild(questionEl);
+        // randomizeAnswers() is called to rearrange the order of the answers every time the quiz is taken
+        randomizeAnswers();
+        // The quizAnswersValues array is reset from previous question
+        quizAnswersValues = [];
+        addAnswers();
+        // The currentQuestion counter advances
+        currentQuestion++;
+    }
+}
+
+// Adds answers to the quiz div
+var addAnswers = function () {
+    // Creates the <div> to which the questions will be added
+    var fourAnswersEl = document.createElement("div");
+    // Adds a class to the <div>
+    fourAnswersEl.className = "quizAnswers";
+    // Adds answers from the current question object according to the array that was established by the randomizeAnswers() function
+    for (i = 0; i < 4; i++) {
+        // Creates a <button> for each answer
+        var answerEl = document.createElement("button");
+        // Gives each <button> a class
+        answerEl.className = "questionAnswer";
+        // Adds in the answer as text content
+        answerEl.textContent = currentQuestionObj.answers[quizAnswers[i]].answerString;
+        // Appends the answer <button> to the previously created fourAnswersEl <div>
+        fourAnswersEl.appendChild(answerEl);
+        // Tracks the answers' values in the quizAnswersValues array
+        quizAnswersValues[i] = currentQuestionObj.answers[quizAnswers[i]].answerValue;
+    }
+    // Appends the fourAnswersEl <div> which now contains four <button> elements that contain the answers as text content
+    quiz.appendChild(fourAnswersEl);
+    console.log(quizAnswersValues);
+    // Establishes references for each of the newly added <button> elements
+    questionAnswer1 = document.querySelector("button:nth-child(1)");
+    questionAnswer2 = document.querySelector("button:nth-child(2)");
+    questionAnswer3 = document.querySelector("button:nth-child(3)");
+    questionAnswer4 = document.querySelector("button:nth-child(4)");
+}
 
 // This function randomizes the order of the answers for the current question
 var randomizeAnswers = function () {
@@ -582,40 +606,85 @@ var randomizeAnswers = function () {
 
 // Adds the next question when a correct answer is given
 var correctAnswer = function () {
+    // Resets the quizAnswersValues array for subsequent questions
     quizAnswersValues = [];
+    // Removes the answered question
     removeQuizContent();
+    // Adds in the next question
     addQuestion();
+    // Updates the score
     scoreAdjust();
+    // Updates the combo
     comboAdjust();
+    // Updates the points multiplier
     pointsMultiplierAdjust();
+    timerBarReset();
+    timerBarShrink();
 };
 
 // Incorrect answer function
 var incorrectAnswer = function () {
     console.log("Incorrect");
-    combo = 0;
-    currentCombo.textContent = combo;
-    pointsMultiplier = 1;
-    currentPointsMultiplier.textContent = pointsMultiplier.toPrecision(2);
+    // Resets the combo
+    comboReset();
+    // Resets the points multiplier
+    pointsMultiplierReset();
+    timerBarReset();
 };
 
 // Adjusts the score after a correct answer was chosen
 var scoreAdjust = function () {
-    currentScore += 1000 * JSON.parse(pointsMultiplier);    
+    currentScore += 1000 * JSON.parse(pointsMultiplier);
     currentScoreDisplay.textContent = currentScore;
-}
+};
 
 // Adjusts the combo after a correct answer was chosen
 var comboAdjust = function () {
     combo++;
     currentCombo.textContent = combo;
-}
+};
+
+// Resets the combo and updates the display
+var comboReset = function () {
+    combo = 0;
+    currentCombo.textContent = combo;
+};
+
+// Resets the points multiplier and updates the display
+var pointsMultiplierReset = function () {
+    pointsMultiplier = 1;
+    currentPointsMultiplier.textContent = pointsMultiplier.toPrecision(2);
+};
 
 // Adjusts the score after a correct answer was chosen
 var pointsMultiplierAdjust = function () {
     pointsMultiplier = pointsMultiplier + 0.1;
     currentPointsMultiplier.textContent = pointsMultiplier.toPrecision(2);
-}
+};
+
+var timerBarShrink = function () {
+    timerBarWidth = 513;
+    timerBar.style.width = JSON.stringify(timerBarWidth) + "px";
+    timeoutID = setTimeout(() => {
+        comboReset();
+        pointsMultiplierReset();
+    }, 15000);
+    intervalID = setInterval(function () {
+        if (timerBarWidth > 32) {
+            timerBarWidth -= 37;
+        } else if (timerBarWidth === 32) {
+            timerBarWidth = 0;
+        }
+        timerBar.style.width = JSON.stringify(timerBarWidth) + "px";
+    }, 1000);
+};
+
+var timerBarReset = function () {
+    clearInterval(intervalID);
+    timerBarWidth = 550;
+    timerBar.style.width = JSON.stringify(timerBarWidth) + "px";
+    clearTimeout(timeoutID);
+};
 
 // Evenet listener for the beginQuiz button
 beginBtn.addEventListener("click", beginQuiz);
@@ -623,6 +692,7 @@ beginBtn.addEventListener("click", beginQuiz);
 // Adds an event listener to the entire quiz section, but only pays attention to questionAnswer class elements 
 quiz.addEventListener("click", function (clickedAnswer) {
     if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer1) {
+        // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[0]) {
             correctAnswer();
         } else {
@@ -630,6 +700,7 @@ quiz.addEventListener("click", function (clickedAnswer) {
         }
     }
     if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer2) {
+        // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[1]) {
             correctAnswer();
         } else {
@@ -637,6 +708,7 @@ quiz.addEventListener("click", function (clickedAnswer) {
         }
     }
     if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer3) {
+        // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[2]) {
             correctAnswer();
         } else {
@@ -644,6 +716,7 @@ quiz.addEventListener("click", function (clickedAnswer) {
         }
     }
     if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer4) {
+        // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[3]) {
             correctAnswer();
         } else {

@@ -27,7 +27,7 @@ header {
     margin: 0 40px;
 }
 
-header h1 {    
+header h1 {
     font-size: 72px;
     padding: 10px 0;
     word-spacing: 8px;
@@ -69,6 +69,7 @@ section {
     padding: 5px;
     align-items: center;
     opacity: 0;
+    transition-duration: 1000ms;
 }
 
 .quizSpace {
@@ -83,6 +84,69 @@ section {
     word-spacing: 6px;
 }
 
+/* BEGIN FADE-IN EFFECT STYLES */
+/* These fade-in effects were learned from https://blog.hubspot.com/website/css-fade-in */
+.quizSpace .quiz .question,
+.quizSpace .quiz .questionAnswer {
+    animation: fadeIn linear 1000ms;
+    -webkit-animation: fadeIn linear 1000ms;
+    -moz-animation: fadeIn linear 1000ms;
+    -o-animation: fadeIn linear 1000ms;
+    -ms-animation: fadeIn linear 1000ms;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@-o-keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@-ms-keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* END FADE-IN EFFECT STYLES */
+
 .quizSpace .quiz h2 {
     font-size: 40px;
     font-weight: normal;
@@ -96,13 +160,14 @@ section {
 
 /* Remove button default styles */
 .quizSpace button {
-	background: none;
-	color: inherit;
-	border: none;
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	outline: inherit;;
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    ;
 }
 
 .quizSpace .beginBtn {
@@ -140,6 +205,8 @@ section {
     width: 550px;
     margin-top: 20px;
     opacity: 0;
+    transition-duration: 1000ms;
+    transition-timing-function: linear;
 }
 
 .challengeContent {
@@ -147,6 +214,7 @@ section {
     width: 230px;
     margin-top: 50px;
     opacity: 0;
+    transition-duration: 1000ms;
 }
 
 .challengeContent div {
