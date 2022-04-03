@@ -484,7 +484,7 @@ var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier")
 // BEGIN GLOBAL VARIABLES
 var combo = 0;
 var pointsMultiplier = 1;
-var timeRemaining = 180;
+var timeRemaining = 10;
 var currentScore = 0;
 var quizQuestions = [];
 var quizAnswers = [];
@@ -498,11 +498,13 @@ var questionAnswer4 = null;
 var timeoutID = null;
 var intervalID = null;
 var timerBarWidth = 550;
+var timerIntervalID = null;
+var highScores = [];
 // END GLOBAL VARIABLES
 
 // Changes display for the game elements, sets values within the display, and adds the first question
 var beginQuiz = function () {
-    // Reveals the game elements with a 1 sec transition duration
+    // Reveals the game elements
     score.style.opacity = "1";
     timerBar.style.opacity = "1";
     challengeContent.style.opacity = "1";
@@ -518,11 +520,15 @@ var beginQuiz = function () {
     randomizeQuestions();
     // Adds the first question
     addQuestion();
+    // Starts the timer
+    runTimer();
 }
 
 // Removes the content of the quiz div
 var removeQuizContent = function () {
+    // Sets variable to identify the last child within the quiz <div>
     var child = quiz.lastElementChild;
+    // Systematically removes the last child element from the quiz <div> until none remain
     while (child) {
         quiz.removeChild(child);
         child = quiz.lastElementChild;
@@ -560,6 +566,11 @@ var addQuestion = function () {
         addAnswers();
         // The currentQuestion counter advances
         currentQuestion++;
+    }
+
+    // Runs the endQuiz function if 15 questions have been answered
+    else {
+        endQuiz();
     }
 }
 
@@ -606,6 +617,10 @@ var randomizeAnswers = function () {
 
 // Adds the next question when a correct answer is given
 var correctAnswer = function () {
+    // Resets the timer bar
+    timerBarReset();
+    // Starts the timer bar counting down again
+    timerBarShrink();
     // Resets the quizAnswersValues array for subsequent questions
     quizAnswersValues = [];
     // Removes the answered question
@@ -613,13 +628,11 @@ var correctAnswer = function () {
     // Adds in the next question
     addQuestion();
     // Updates the score
-    scoreAdjust();
+    scoreAdjust(1000);
     // Updates the combo
     comboAdjust();
     // Updates the points multiplier
     pointsMultiplierAdjust();
-    timerBarReset();
-    timerBarShrink();
 };
 
 // Incorrect answer function
@@ -629,12 +642,13 @@ var incorrectAnswer = function () {
     comboReset();
     // Resets the points multiplier
     pointsMultiplierReset();
+    // Resets the timer bar
     timerBarReset();
 };
 
 // Adjusts the score after a correct answer was chosen
-var scoreAdjust = function () {
-    currentScore += 1000 * JSON.parse(pointsMultiplier);
+var scoreAdjust = function (pointValue) {
+    currentScore += pointValue * pointsMultiplier;
     currentScoreDisplay.textContent = currentScore;
 };
 
@@ -662,29 +676,73 @@ var pointsMultiplierAdjust = function () {
     currentPointsMultiplier.textContent = pointsMultiplier.toPrecision(2);
 };
 
+// Shrinks the timer bar 
 var timerBarShrink = function () {
+    // Starts the timer bar shrinking during the first second
     timerBarWidth = 513;
-    timerBar.style.width = JSON.stringify(timerBarWidth) + "px";
+    timerBar.style.width = timerBarWidth + "px";
+    // setTimeout function will reset the combo and point multiplier if a correct answer isn't given in time
     timeoutID = setTimeout(() => {
         comboReset();
         pointsMultiplierReset();
     }, 15000);
+    // Shrinks the timer bar once every second
     intervalID = setInterval(function () {
+        // Shrinks the bar by 37 pixels until the last second
         if (timerBarWidth > 32) {
             timerBarWidth -= 37;
-        } else if (timerBarWidth === 32) {
+        }
+        
+        // Sets the bar width to zero for the last second
+        else if (timerBarWidth === 32) {
             timerBarWidth = 0;
         }
-        timerBar.style.width = JSON.stringify(timerBarWidth) + "px";
+        timerBar.style.width = timerBarWidth + "px";
     }, 1000);
 };
 
+// Resets the timer bar
 var timerBarReset = function () {
+    // Clears the setTimeout function from line 684
     clearInterval(intervalID);
+    // Returns the timer bar to its default width
     timerBarWidth = 550;
-    timerBar.style.width = JSON.stringify(timerBarWidth) + "px";
+    timerBar.style.width = timerBarWidth + "px";
+    // Clears the setInterval function from line 689
     clearTimeout(timeoutID);
 };
+
+// This function runs the timer
+var runTimer = function () {
+    timerIntervalID = setInterval(() => {
+        // If there is time remaining, the timer will be updated every second
+        if (timeRemaining > 0) {
+            timeRemaining--;
+            timeRemainingDisplay.textContent = timeRemaining;
+        }
+        
+        // If time has run out, the quiz is ended
+        else {
+            endQuiz();
+        }
+    }, 1000)
+};
+
+// Function handles the endgame logic
+var endQuiz = function () {
+    // Stops the timer
+    clearInterval(timerIntervalID);
+    // Resets the timer bar
+    timerBarReset();
+    // Converts timeRemaining to a value for points
+    var timeRemainingPoints = timeRemaining * 10;
+    // Adds points for the time remaining adjusted by the points multiplier
+    scoreAdjust(timeRemainingPoints);
+    // Hides the game elements
+    score.style.opacity = "0";
+    timerBar.style.opacity = "0";
+    challengeContent.style.opacity = "0";
+}
 
 // Evenet listener for the beginQuiz button
 beginBtn.addEventListener("click", beginQuiz);
