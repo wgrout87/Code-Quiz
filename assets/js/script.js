@@ -482,7 +482,7 @@ var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier")
 
 // BEGIN GLOBAL VARIABLES
 var combo = 0;
-var pointsMultiplier = "1.0";
+var pointsMultiplier = 1;
 var timeRemaining = 180;
 var currentScore = 0;
 var quizQuestions = [];
@@ -504,7 +504,7 @@ var beginQuiz = function () {
     currentScoreDisplay.textContent = currentScore;
     timeRemainingDisplay.textContent = timeRemaining;
     currentCombo.textContent = combo;
-    currentPointsMultiplier.textContent = pointsMultiplier;
+    currentPointsMultiplier.textContent = pointsMultiplier.toPrecision(2);
     removeQuizContent();
     beginBtn.remove();
     randomizeQuestions();
@@ -586,17 +586,35 @@ var correctAnswer = function () {
     removeQuizContent();
     addQuestion();
     scoreAdjust();
+    comboAdjust();
+    pointsMultiplierAdjust();
 };
 
 // Incorrect answer function
 var incorrectAnswer = function () {
     console.log("Incorrect");
+    combo = 0;
+    currentCombo.textContent = combo;
+    pointsMultiplier = 1;
+    currentPointsMultiplier.textContent = pointsMultiplier.toPrecision(2);
 };
 
 // Adjusts the score after a correct answer was chosen
 var scoreAdjust = function () {
-    currentScore += 1000;    
+    currentScore += 1000 * JSON.parse(pointsMultiplier);    
     currentScoreDisplay.textContent = currentScore;
+}
+
+// Adjusts the combo after a correct answer was chosen
+var comboAdjust = function () {
+    combo++;
+    currentCombo.textContent = combo;
+}
+
+// Adjusts the score after a correct answer was chosen
+var pointsMultiplierAdjust = function () {
+    pointsMultiplier = pointsMultiplier + 0.1;
+    currentPointsMultiplier.textContent = pointsMultiplier.toPrecision(2);
 }
 
 // Evenet listener for the beginQuiz button
