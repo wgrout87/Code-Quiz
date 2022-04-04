@@ -151,7 +151,7 @@ var questions = [
                 answerValue: false
             },
             {
-                answerString: "Add -M \"message\" at the end of git commit",
+                answerString: "Add -msg \"message\" at the end of git commit",
                 answerValue: false
             }
         ]
@@ -484,7 +484,7 @@ var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier")
 // BEGIN GLOBAL VARIABLES
 var combo = 0;
 var pointsMultiplier = 1;
-var timeRemaining = 180;
+var timeRemaining = 0;
 var currentScore = 0;
 var quizQuestions = [];
 var quizAnswers = [];
@@ -500,6 +500,17 @@ var intervalID = null;
 var timerBarWidth = 550;
 var timerIntervalID = null;
 var highScores = [];
+var highScoreRecord = {
+    initials: "",
+    highScore: ""
+};
+var cursor = null;
+var cursorIntervalID = null;
+var cursorAltIntervalID = null;
+var cursorTimeoutID = null;
+var cursorAltTimeoutID = null;
+var initialsContainer = null;
+var initials = "";
 // END GLOBAL VARIABLES
 
 // Changes display for the game elements, sets values within the display, and adds the first question
@@ -694,7 +705,7 @@ var timerBarShrink = function () {
         if (timerBarWidth > 32) {
             timerBarWidth -= 37;
         }
-        
+
         // Sets the bar width to zero for the last second
         else if (timerBarWidth === 32) {
             timerBarWidth = 0;
@@ -722,7 +733,7 @@ var runTimer = function () {
             timeRemaining--;
             timeRemainingDisplay.textContent = timeRemaining;
         }
-        
+
         // If time has run out, the quiz is ended
         else {
             endQuiz();
@@ -745,16 +756,106 @@ var endQuiz = function () {
     timerBar.style.opacity = "0";
     challengeContent.style.opacity = "0";
     removeQuizContent();
-}
+    results();
+};
 
 // Displays the quiz results and prompts for high score initials if applicable
+var results = function () {
+    var displayResultsEl = document.createElement("h2");
+    displayResultsEl.className = "results";
+    displayResultsEl.textContent = "You scored " + currentScore + " points!";
+    quiz.appendChild(displayResultsEl);
+    compareHighScores();
+};
+
+// Retrieves saved high scores for comparison
+var compareHighScores = function () {
+    highScores = JSON.parse(localStorage.getItem("highScores"));
+    // If highScores is null, the array is empty, and a high score is automatic
+    if (highScores === null) {
+        console.log("New high score! - The array is empty");
+        newHighScore();
+    }
+    // Compares the current score with scores in the array if the array is full
+    else if (highScores.length == 10) {
+        for (i = 0; i < highScores.length; i++) {
+            if (currentScore > highScores[i].highScore) {
+                console.log("New high score!");
+                newHighScore();
+            }
+        }
+    }
+
+    // High score is automatic if there is space for it in the top 10
+    else {
+        console.log("New high score! - There's space in the array");
+        newHighScore();
+    }
+};
+
+var newHighScore = function () {
+    highScoreRecord.highScore = currentScore;
+    var displayResultsEl = document.createElement("p");
+    displayResultsEl.className = "results";
+    displayResultsEl.textContent = "New high score!";
+    quiz.appendChild(displayResultsEl);
+    addInitials();
+    displayResultsEl = document.createElement("h2");
+    displayResultsEl.className = "results";
+    displayResultsEl.textContent = "Please enter your initials:";
+    quiz.appendChild(displayResultsEl);
+    addInitialsInput();
+    waitForInput();
+};
+
+var addInitials = function () {
+    initialsContainer = document.createElement("div");
+    initialsContainer.className = "initials";
+    for (i = 0; i < 3; i++) {
+        var initialsEl = document.createElement("div");
+        if (i === 0) {
+            initialsEl.className = "cursor";
+        }
+        initialsEl.textContent = "";
+        initialsContainer.appendChild(initialsEl);
+    }
+    quiz.appendChild(initialsContainer);
+};
+
+var addInitialsInput = function () {
+    var btnDivEl = document.createElement("div");
+    btnDivEl.className = "btnDiv";
+    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (i = 0; i < chars.length; i++) {
+        var charBtnEl = document.createElement("button");
+        charBtnEl.className = "charBtn";
+        charBtnEl.textContent = chars.charAt(i);
+        btnDivEl.appendChild(charBtnEl);
+    }
+    quiz.appendChild(btnDivEl);
+};
+
+var waitForInput = function () {
+    cursor = document.querySelector(".cursor");
+    cursorTimeoutID = setTimeout(() => {
+        cursor.classList.remove("cursor");
+    }, 400)
+    cursorAltTimeoutID = setTimeout(() => {
+        cursorIntervalID = setInterval(() => {
+            cursor.classList.remove("cursor");
+        }, 800);
+    }, 400);
+    cursorAltIntervalID = setInterval(() => {
+        cursor.classList.add("cursor");
+    }, 800);
+};
 
 // Evenet listener for the beginQuiz button
 beginBtn.addEventListener("click", beginQuiz);
 
 // Adds an event listener to the entire quiz section, but only pays attention to questionAnswer class elements 
-quiz.addEventListener("click", function (clickedAnswer) {
-    if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer1) {
+quiz.addEventListener("click", function (clicked) {
+    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer1) {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[0]) {
             correctAnswer();
@@ -762,7 +863,7 @@ quiz.addEventListener("click", function (clickedAnswer) {
             incorrectAnswer();
         }
     }
-    if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer2) {
+    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer2) {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[1]) {
             correctAnswer();
@@ -770,7 +871,7 @@ quiz.addEventListener("click", function (clickedAnswer) {
             incorrectAnswer();
         }
     }
-    if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer3) {
+    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer3) {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[2]) {
             correctAnswer();
@@ -778,12 +879,45 @@ quiz.addEventListener("click", function (clickedAnswer) {
             incorrectAnswer();
         }
     }
-    if (clickedAnswer.target.className == "questionAnswer" && clickedAnswer.target === questionAnswer4) {
+    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer4) {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[3]) {
             correctAnswer();
         } else {
             incorrectAnswer();
+        }
+    }
+    if (clicked.target.className == "charBtn") {
+        cursor.textContent = clicked.target.textContent;
+        initials += clicked.target.textContent;
+        if (cursor == initialsContainer.querySelector("div:nth-child(1)")) {
+            cursor.classList.remove("cursor");
+            clearInterval(cursorIntervalID);
+            clearInterval(cursorAltIntervalID);
+            clearTimeout(cursorTimeoutID);
+            clearTimeout(cursorAltTimeoutID);
+            cursor = initialsContainer.querySelector("div:nth-child(2)");
+            cursor.classList.add("cursor");
+            waitForInput();
+        }
+        else if (cursor == initialsContainer.querySelector("div:nth-child(2)")) {
+            cursor.classList.remove("cursor");
+            clearInterval(cursorIntervalID);
+            clearInterval(cursorAltIntervalID);
+            clearTimeout(cursorTimeoutID);
+            clearTimeout(cursorAltTimeoutID);
+            cursor = initialsContainer.querySelector("div:nth-child(3)");
+            cursor.classList.add("cursor");
+            waitForInput();
+        }
+        else if (cursor == initialsContainer.querySelector("div:nth-child(3)")) {
+            cursor.classList.remove("cursor");
+            clearInterval(cursorIntervalID);
+            clearInterval(cursorAltIntervalID);
+            clearTimeout(cursorTimeoutID);
+            clearTimeout(cursorAltTimeoutID);
+            highScoreRecord.initials = initials;
+            console.log(JSON.stringify(highScoreRecord));
         }
     }
 });

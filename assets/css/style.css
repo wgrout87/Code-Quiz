@@ -228,3 +228,36 @@ section {
 .challengeContent .timeRemaining {
     margin-top: 68px;
 }
+
+.results {
+    text-align: center;
+}
+
+.initials {
+    display: flex;
+    justify-content: center;
+}
+
+.initials div {
+    margin: 5px;
+    height: 75px;
+    width: 50px;
+    font-size: 85px;
+    text-align: center;
+}
+
+.cursor {
+    border-bottom: 5px solid var(--font-color);
+}
+
+.btnDiv {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 32px;
+}
+
+.charBtn {
+    width: 50px;
+    height: 50px;
+}
