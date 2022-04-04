@@ -484,7 +484,7 @@ var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier")
 // BEGIN GLOBAL VARIABLES
 var combo = 0;
 var pointsMultiplier = 1;
-var timeRemaining = 10;
+var timeRemaining = 180;
 var currentScore = 0;
 var quizQuestions = [];
 var quizAnswers = [];
@@ -644,6 +644,8 @@ var incorrectAnswer = function () {
     pointsMultiplierReset();
     // Resets the timer bar
     timerBarReset();
+    timeRemaining -= 3;
+    timeRemainingDisplay.textContent = timeRemaining;
 };
 
 // Adjusts the score after a correct answer was chosen
@@ -742,7 +744,10 @@ var endQuiz = function () {
     score.style.opacity = "0";
     timerBar.style.opacity = "0";
     challengeContent.style.opacity = "0";
+    removeQuizContent();
 }
+
+// Displays the quiz results and prompts for high score initials if applicable
 
 // Evenet listener for the beginQuiz button
 beginBtn.addEventListener("click", beginQuiz);
