@@ -1,14 +1,8 @@
 import { questions } from "./questions.js";
-// BEGIN QUESTIONS
-// Array of question objects
-
-// END QUESTIONS
-
 
 // BEGIN QUERY SELECTORS
 var score = document.querySelector("#score");
 var currentScoreDisplay = document.querySelector("#currentScore");
-var quizContent = document.querySelector("#quizContent");
 var quiz = document.querySelector("#quiz");
 var beginBtn = document.querySelector("#beginBtn");
 var timerBar = document.querySelector("#timerBar");
