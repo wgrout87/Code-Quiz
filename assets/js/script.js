@@ -15,7 +15,7 @@ var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier")
 // BEGIN GLOBAL VARIABLES
 var combo = 0;
 var pointsMultiplier = 1;
-var timeRemaining = 180;
+var timeRemaining = 0;
 var currentScore = 0;
 var quizQuestions = [];
 var quizAnswers = [];
@@ -298,7 +298,11 @@ var results = function () {
     quiz.appendChild(displayResultsEl);
     if (compareHighScores() > 0) {
         newHighScoreDisplay();
-    };
+    }
+
+    else {
+        console.log("Play again?")
+    }
 };
 
 // Retrieves saved high scores for comparison
@@ -321,60 +325,107 @@ var compareHighScores = function () {
 };
 
 var newHighScoreDisplay = function () {
+    // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
     highScoreRecord.highScore = currentScore;
+    // Creates a new <p> element
     var displayResultsEl = document.createElement("p");
+    // Gives it the class name "results"
     displayResultsEl.className = "results";
+    // Adds the text
     displayResultsEl.textContent = "New high score!";
+    // Appends it to the quiz <div>
     quiz.appendChild(displayResultsEl);
+    // Runs the addInitials() function which appends three <div> elements for initials input
     addInitials();
+    // Creates an <h2> element
     displayResultsEl = document.createElement("h2");
+    // Gives it the class name "results"
     displayResultsEl.className = "results";
+    // Adds the text
     displayResultsEl.textContent = "Please enter your initials:";
+    // Appends it to the quiz <div>
     quiz.appendChild(displayResultsEl);
+    // Runs the addInitialsInput() function which adds buttons for each individual letter for initials input
     addInitialsInput();
+    // Runs the waitForInput() function which adds a flashing cursor to any <div> element with the "cursor" class
     waitForInput();
 };
 
+// Adds 3 <div> elements that will be used for initials input. Each <div> will receive its own initial upon entry
 var addInitials = function () {
+    // Creates a new <div> element to hold the remaining 3
     initialsContainer = document.createElement("div");
+    // Gives it the class name "initials"
     initialsContainer.className = "initials";
+    // Loops until 3 <div> elements are created and added within the previous <div>
     for (let i = 0; i < 3; i++) {
         var initialsEl = document.createElement("div");
+        // The first nested <div> is given the class name "cursor"
         if (i === 0) {
             initialsEl.className = "cursor";
         }
-        initialsEl.textContent = "";
         initialsContainer.appendChild(initialsEl);
     }
+    // The new <div> with 3 nested <div> elements is appended to the quiz space
     quiz.appendChild(initialsContainer);
 };
 
+// Adds buttons to receive input when initials are requested
 var addInitialsInput = function () {
+    // Creates a new <div> element that will hold the buttons this function will create
     var btnDivEl = document.createElement("div");
+    // Gives it the class name "btnDiv"
     btnDivEl.className = "btnDiv";
+    // This string of characters will provide the text content of the buttons that will be generated
     var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    // Loops until a button for each letter in the above string has been created
     for (let i = 0; i < chars.length; i++) {
+        // Creates a new <button> element
         var charBtnEl = document.createElement("button");
+        // Gives it the class name "charBtn"
         charBtnEl.className = "charBtn";
+        // As i increments, it will simultaneously be used to reference a character position in the "chars" string, which will become the text content of the new button
         charBtnEl.textContent = chars.charAt(i);
+        // The new button is appended to the previously created <div>
         btnDivEl.appendChild(charBtnEl);
     }
+    // The whole thing is added to the quiz section
     quiz.appendChild(btnDivEl);
 };
 
+// This function handles the flashing of the border bottom for the initials input
 var waitForInput = function () {
+    // The current <div> with the "cursor" class is identified and assigned to the cursor global variable
     cursor = document.querySelector(".cursor");
+    // The timeout ID for this setTimeout function is captured
     cursorTimeoutID = setTimeout(() => {
+        // The "cursor" class will be removed in 400ms. The <div> with the "cursor" class will begin with the border bottom established by the CSS for those first 400 ms
         cursor.classList.remove("cursor");
     }, 400)
+    // The timeout ID for this setTimeout function is captured. After 400ms, an interval will begin
     cursorAltTimeoutID = setTimeout(() => {
+        // The interval ID for this setInterval function is captured
         cursorIntervalID = setInterval(() => {
+            // Every 800 ms the "cursor" class will be removed. So far the "cursor" class will be removed 400ms in, then 1200ms, 2000ms, 2800ms, etc.
             cursor.classList.remove("cursor");
         }, 800);
     }, 400);
+    // The interval ID for this setInterval function is captured
     cursorAltIntervalID = setInterval(() => {
+        // Every 800 ms the "cursor" class will be added again. So it will be added back 800ms in, then 1600ms, 2400ms, etc. This will return it evenly spaced out with the class being removed, causing the flashing effect.
         cursor.classList.add("cursor");
     }, 800);
+};
+
+// Halts the flashing cursor
+var clearCursor = function () {
+    // Removes the cursor class which adds the border bottom
+    cursor.classList.remove("cursor");
+    // Clears intervals and timeouts for a smooth transition when necessary
+    clearInterval(cursorIntervalID);
+    clearInterval(cursorAltIntervalID);
+    clearTimeout(cursorTimeoutID);
+    clearTimeout(cursorAltTimeoutID);
 };
 
 // Evenet listener for the beginQuiz button
@@ -421,13 +472,8 @@ quiz.addEventListener("click", function (clicked) {
         initials += clicked.target.textContent;
         // This if statement handles entry for the first initial after an initial has been selected
         if (cursor == initialsContainer.querySelector("div:nth-child(1)")) {
-            // The cursor class is removed, so the bottom border will stop blinking and disappear
-            cursor.classList.remove("cursor");
-            // All of the timeouts and intervals are cleared to provide the smoothest transition
-            clearInterval(cursorIntervalID);
-            clearInterval(cursorAltIntervalID);
-            clearTimeout(cursorTimeoutID);
-            clearTimeout(cursorAltTimeoutID);
+            // The cursor is halted
+            clearCursor();
             // The cursor variable is assigned the second initial
             cursor = initialsContainer.querySelector("div:nth-child(2)");
             // The cursor class is added to the second initial so that its border can appear and begin to blink
@@ -437,13 +483,8 @@ quiz.addEventListener("click", function (clicked) {
         }
         // This if statement handles entry for the second initial after an initial has been selected
         else if (cursor == initialsContainer.querySelector("div:nth-child(2)")) {
-            // The cursor class is removed, so the bottom border will stop blinking and disappear
-            cursor.classList.remove("cursor");
-            // All of the timeouts and intervals are cleared to provide the smoothest transition
-            clearInterval(cursorIntervalID);
-            clearInterval(cursorAltIntervalID);
-            clearTimeout(cursorTimeoutID);
-            clearTimeout(cursorAltTimeoutID);
+            // The cursor is halted
+            clearCursor();
             // The cursor variable is assigned the third initial
             cursor = initialsContainer.querySelector("div:nth-child(3)");
             // The cursor class is added to the third initial so that its border can appear and begin to blink
@@ -453,13 +494,8 @@ quiz.addEventListener("click", function (clicked) {
         }
         // This if statement handles entry for the third initial after an initial has been selected
         else if (cursor == initialsContainer.querySelector("div:nth-child(3)")) {
-            // The cursor class is removed, so the bottom border will stop blinking and disappear
-            cursor.classList.remove("cursor");
-            // All of the timeouts and intervals are cleared and no longer needed
-            clearInterval(cursorIntervalID);
-            clearInterval(cursorAltIntervalID);
-            clearTimeout(cursorTimeoutID);
-            clearTimeout(cursorAltTimeoutID);
+            // The cursor is halted
+            clearCursor();
             // Initials input has been received, and the string is added to the highScoreRecord object for storage
             highScoreRecord.initials = initials;
             console.log(JSON.stringify(highScoreRecord));
