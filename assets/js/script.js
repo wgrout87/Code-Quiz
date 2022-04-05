@@ -17,7 +17,7 @@ var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier")
 // BEGIN GLOBAL VARIABLES
 var combo = 0;
 var pointsMultiplier = 1;
-var timeRemaining = 180;
+var timeRemaining = 0;
 var currentScore = 0;
 var quizQuestions = [];
 var quizAnswers = [];
@@ -44,6 +44,7 @@ var cursorTimeoutID = null;
 var cursorAltTimeoutID = null;
 var initialsContainer = null;
 var initials = "";
+var newHighScorePosition = null;
 // END GLOBAL VARIABLES
 
 // Changes display for the game elements, sets values within the display, and adds the first question
@@ -75,7 +76,7 @@ var retrieveHighScores = function () {
     // Displays the high score
     if (highScores) {
         highScoreInitials.textContent = highScores[0].initials;
-        highScorePoints.textContent = highScorePoints[0].highScore;
+        highScorePoints.textContent = highScores[0].highScore;
     }
 
     // If no high scores are saved, the current high score will display as blank
@@ -315,36 +316,45 @@ var results = function () {
     displayResultsEl.className = "results";
     displayResultsEl.textContent = "You scored " + currentScore + " points!";
     quiz.appendChild(displayResultsEl);
-    if (compareHighScores() > 0) {
-        newHighScoreDisplay();
-    }
-
-    else {
-        console.log("Play again?")
-    }
+    compareHighScores();
 };
 
 // Compares currentScore to any saved high score values
 var compareHighScores = function () {
     // If highScores is null, the array is empty, and a high score is automatic
     if (highScores === null) {
-        console.log("New high score! - The array is empty");
-        return 1;
+        // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
+        highScoreRecord.highScore = currentScore;
+        newHighScoreDisplay();
     }
     // Compares the current high score against each score in the saved array
     else {
+        // For loop looks at each saved high score and compares the currentScore
         for (let i = 0; i < highScores.length; i++) {
-            if (currentScore > highScores[i].highScore) {
-                console.log("New high score!");
-                return 2;
+            // Starting at the end of the array, the currentScore is compared 
+            if (currentScore > highScores[highScores.length - 1 - i].highScore ) {
+                // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
+                highScoreRecord.highScore = currentScore;
+                // newHighScorePosition is set to the number corresponding to the last position the currentScore was greater than. This value will be used to splice the currentScore into the correct position
+                newHighScorePosition = highScores.length - 1 - i;
             }
         }
+    };
+
+    // If newHighScorePosition was given a value, then a new high score was achieved that beat out at least one of the saved high scores
+    if (newHighScorePosition !== null) {
+        newHighScoreDisplay();
+    }
+
+    // If there is space in the highScores array, but the currentScore did not beat any of the saved scores, a new high score was still achieved and newHighScoreDisplay() is called
+    if (highScores < 10 && newHighScorePosition == null) {
+        newHighScoreDisplay();
     }
 };
 
+// 
+
 var newHighScoreDisplay = function () {
-    // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
-    highScoreRecord.highScore = currentScore;
     // Creates a new <p> element
     var displayResultsEl = document.createElement("p");
     // Gives it the class name "results"
@@ -446,6 +456,32 @@ var clearCursor = function () {
     clearTimeout(cursorAltTimeoutID);
 };
 
+// Saves the new high score in the highScores array
+var saveHighScore = function () {
+    // If there are currently high scores saved, this if statement will insert the new high score into its properly ordered position provided by the compareHighScores() function
+    if (highScores !== null) {
+        highScores.splice(newHighScorePosition, 0, highScoreRecord);
+        console.log(highScores);
+        if (highScores.length > 10) {
+            highScores.pop();
+        };
+        localStorage.setItem("highScores", JSON.stringify(highScores));
+    }
+
+    // If the highScores array is null, this is the first saved high score, and it will simply be pushed into the array
+    else {
+        console.log(highScoreRecord);
+        highScores = [highScoreRecord];
+        localStorage.setItem("highScores", JSON.stringify(highScores));
+    }
+};
+
+var playAgainPrompt = function () {
+    var promptEl = document.createElement("div");
+    promptEl.className = "prompt";
+    
+};
+
 // Calls the retrieveHighScores() function to display the current high score
 retrieveHighScores();
 
@@ -519,6 +555,7 @@ quiz.addEventListener("click", function (clicked) {
             clearCursor();
             // Initials input has been received, and the string is added to the highScoreRecord object for storage
             highScoreRecord.initials = initials;
+            saveHighScore();
             console.log(JSON.stringify(highScoreRecord));
         }
     }
