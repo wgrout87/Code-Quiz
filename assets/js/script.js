@@ -1,6 +1,8 @@
 import { questions } from "./questions.js";
 
 // BEGIN QUERY SELECTORS
+var highScoreInitials = document.querySelector("#highScoreInitials");
+var highScorePoints = document.querySelector("#highScorePoints");
 var score = document.querySelector("#score");
 var currentScoreDisplay = document.querySelector("#currentScore");
 var quiz = document.querySelector("#quiz");
@@ -15,7 +17,7 @@ var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier")
 // BEGIN GLOBAL VARIABLES
 var combo = 0;
 var pointsMultiplier = 1;
-var timeRemaining = 0;
+var timeRemaining = 180;
 var currentScore = 0;
 var quizQuestions = [];
 var quizAnswers = [];
@@ -64,7 +66,24 @@ var beginQuiz = function () {
     addQuestion();
     // Starts the timer
     runTimer();
-}
+};
+
+// Retrieves the current saved array of high scores
+var retrieveHighScores = function () {
+    // Retrieves the saved high score string and turns it back into an array of objects
+    highScores = JSON.parse(localStorage.getItem("highScores"));
+    // Displays the high score
+    if (highScores) {
+        highScoreInitials.textContent = highScores[0].initials;
+        highScorePoints.textContent = highScorePoints[0].highScore;
+    }
+
+    // If no high scores are saved, the current high score will display as blank
+    else {
+        highScoreInitials.textContent = "---";
+        highScorePoints.textContent = "-";
+    }
+};
 
 // Removes the content of the quiz div
 var removeQuizContent = function () {
@@ -305,9 +324,8 @@ var results = function () {
     }
 };
 
-// Retrieves saved high scores for comparison
+// Compares currentScore to any saved high score values
 var compareHighScores = function () {
-    highScores = JSON.parse(localStorage.getItem("highScores"));
     // If highScores is null, the array is empty, and a high score is automatic
     if (highScores === null) {
         console.log("New high score! - The array is empty");
@@ -427,6 +445,9 @@ var clearCursor = function () {
     clearTimeout(cursorTimeoutID);
     clearTimeout(cursorAltTimeoutID);
 };
+
+// Calls the retrieveHighScores() function to display the current high score
+retrieveHighScores();
 
 // Evenet listener for the beginQuiz button
 beginBtn.addEventListener("click", beginQuiz);
