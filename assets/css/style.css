@@ -283,3 +283,7 @@ section {
 .quizSpace .quiz .highScoreListItem p {
     font-size: 20px;
 }
+
+#playAgain {
+    margin: 0px auto;
+}

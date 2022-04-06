@@ -527,7 +527,6 @@ var displayHighScores = function () {
     }
     quiz.appendChild(highScoreListEl);
     var playAgainEl = document.createElement("button");
-    playAgainEl.className = "centered";
     playAgainEl.id = "playAgain";
     playAgainEl.textContent = "Play Again";
     quiz.appendChild(playAgainEl);
