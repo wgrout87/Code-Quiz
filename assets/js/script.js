@@ -17,7 +17,7 @@ var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier")
 // BEGIN GLOBAL VARIABLES
 var combo = 0;
 var pointsMultiplier = 1;
-var timeRemaining = 0;
+var timeRemaining = null;
 var currentScore = 0;
 var quizQuestions = [];
 var quizAnswers = [];
@@ -49,6 +49,8 @@ var newHighScorePosition = null;
 
 // Changes display for the game elements, sets values within the display, and adds the first question
 var beginQuiz = function () {
+    // Sets the timer
+    timeRemaining = 10;
     // Reveals the game elements
     score.style.opacity = "1";
     timerBar.style.opacity = "1";
@@ -113,7 +115,6 @@ var randomizeQuestions = function () {
 var addQuestion = function () {
     // Only 15 questions will be chosen per quiz
     if (currentQuestion < 15) {
-        console.log(quizAnswersValues);
         // The question object selected from the questions array is referenced here
         currentQuestionObj = questions[quizQuestions[currentQuestion]];
         // HTML elements are created referencing the question object properties and added into the DOM
@@ -316,7 +317,13 @@ var results = function () {
     displayResultsEl.className = "results";
     displayResultsEl.textContent = "You scored " + currentScore + " points!";
     quiz.appendChild(displayResultsEl);
-    compareHighScores();
+    if (currentScore > 0) {
+        compareHighScores();
+    }
+    
+    else {
+        playAgainPrompt();
+    }
 };
 
 // Compares currentScore to any saved high score values
@@ -332,7 +339,7 @@ var compareHighScores = function () {
         // For loop looks at each saved high score and compares the currentScore
         for (let i = 0; i < highScores.length; i++) {
             // Starting at the end of the array, the currentScore is compared 
-            if (currentScore > highScores[highScores.length - 1 - i].highScore ) {
+            if (currentScore > highScores[highScores.length - 1 - i].highScore) {
                 // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
                 highScoreRecord.highScore = currentScore;
                 // newHighScorePosition is set to the number corresponding to the last position the currentScore was greater than. This value will be used to splice the currentScore into the correct position
@@ -344,15 +351,23 @@ var compareHighScores = function () {
     // If newHighScorePosition was given a value, then a new high score was achieved that beat out at least one of the saved high scores
     if (newHighScorePosition !== null) {
         newHighScoreDisplay();
+        // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
+        highScoreRecord.highScore = currentScore;
     }
 
-    // If there is space in the highScores array, but the currentScore did not beat any of the saved scores, a new high score was still achieved and newHighScoreDisplay() is called
-    if (highScores < 10 && newHighScorePosition == null) {
-        newHighScoreDisplay();
-    }
+    if (highScores !== null) {
+        // If there is space in the highScores array, but the currentScore did not beat any of the saved scores, a new high score was still achieved and newHighScoreDisplay() is called
+        if (highScores.length < 10 && newHighScorePosition == null) {
+            newHighScoreDisplay();
+            // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
+            highScoreRecord.highScore = currentScore;
+        }
+
+        if (highScores.length == 10 && newHighScorePosition == null) {
+            playAgainPrompt();
+        }
+    };
 };
-
-// 
 
 var newHighScoreDisplay = function () {
     // Creates a new <p> element
@@ -384,7 +399,7 @@ var addInitials = function () {
     // Creates a new <div> element to hold the remaining 3
     initialsContainer = document.createElement("div");
     // Gives it the class name "initials"
-    initialsContainer.className = "initials";
+    initialsContainer.className = "initials centered";
     // Loops until 3 <div> elements are created and added within the previous <div>
     for (let i = 0; i < 3; i++) {
         var initialsEl = document.createElement("div");
@@ -403,7 +418,7 @@ var addInitialsInput = function () {
     // Creates a new <div> element that will hold the buttons this function will create
     var btnDivEl = document.createElement("div");
     // Gives it the class name "btnDiv"
-    btnDivEl.className = "btnDiv";
+    btnDivEl.className = "btnDiv centered";
     // This string of characters will provide the text content of the buttons that will be generated
     var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     // Loops until a button for each letter in the above string has been created
@@ -458,8 +473,8 @@ var clearCursor = function () {
 
 // Saves the new high score in the highScores array
 var saveHighScore = function () {
-    // If there are currently high scores saved, this if statement will insert the new high score into its properly ordered position provided by the compareHighScores() function
-    if (highScores !== null) {
+    // If there are currently high scores saved and the newHighScorePosition has been given a value, this if statement will insert the new high score into its properly ordered position provided by the compareHighScores() function
+    if (highScores !== null && newHighScorePosition !== null) {
         highScores.splice(newHighScorePosition, 0, highScoreRecord);
         console.log(highScores);
         if (highScores.length > 10) {
@@ -468,7 +483,14 @@ var saveHighScore = function () {
         localStorage.setItem("highScores", JSON.stringify(highScores));
     }
 
-    // If the highScores array is null, this is the first saved high score, and it will simply be pushed into the array
+    // If there are currently high scores saved and the currentScore did not beat any of the saved high scores, this if statement will add the highScoreRecord at the end of the list
+    else if (highScores !== null) {
+        highScores.push(highScoreRecord);
+        console.log(highScores);
+        localStorage.setItem("highScores", JSON.stringify(highScores));
+    }
+
+    // If the highScores array is null, this is the first saved high score, and it will simply be saved as the only item in the array
     else {
         console.log(highScoreRecord);
         highScores = [highScoreRecord];
@@ -476,10 +498,77 @@ var saveHighScore = function () {
     }
 };
 
+var displayHighScores = function () {
+    removeQuizContent();
+    var displayHighScoresEl = document.createElement("h2");
+    displayHighScoresEl.textContent = "High Scores";
+    displayHighScoresEl.className = "highScoreListTitle centered";
+    quiz.appendChild(displayHighScoresEl);
+    var highScoreListEl = document.createElement("ol");
+    highScoreListEl.className = "highScoreList";
+    if (highScores !== null) {
+        for (let i = 0; i < highScores.length; i++) {
+            var highScoreListItemEl = document.createElement("li");
+            highScoreListItemEl.className = "highScoreListItem";
+            var highScoreInitialsEl = document.createElement("p");
+            if (i === 9) {
+                highScoreInitialsEl.textContent = (i + 1) + ". " + highScores[i].initials;
+            }
+
+            else {
+                highScoreInitialsEl.textContent = "0" + (i + 1) + ". " + highScores[i].initials;
+            }
+            highScoreListItemEl.appendChild(highScoreInitialsEl);
+            var highScoreEl = document.createElement("p");
+            highScoreEl.textContent = highScores[i].highScore;
+            highScoreListItemEl.appendChild(highScoreEl);
+            highScoreListEl.appendChild(highScoreListItemEl);
+        }
+    }
+    quiz.appendChild(highScoreListEl);
+    var playAgainEl = document.createElement("button");
+    playAgainEl.className = "centered";
+    playAgainEl.id = "playAgain";
+    playAgainEl.textContent = "Play Again";
+    quiz.appendChild(playAgainEl);
+};
+
 var playAgainPrompt = function () {
     var promptEl = document.createElement("div");
-    promptEl.className = "prompt";
-    
+    promptEl.className = "prompt centered";
+    var promptQuestionEl = document.createElement("h2");
+    promptQuestionEl.textContent = "Would you like to play again?";
+    promptEl.appendChild(promptQuestionEl);
+    var promptBtnDivEl = document.createElement("div");
+    promptBtnDivEl.className = "promptButtons";
+    var promptBtnYEl = document.createElement("button");
+    promptBtnYEl.className = "charBtn";
+    promptBtnYEl.textContent = "Y";
+    promptBtnYEl.id = "Y";
+    promptBtnDivEl.appendChild(promptBtnYEl);
+    var promptBtnBetween = document.createElement("div");
+    promptBtnBetween.className = "btnBetween";
+    promptBtnBetween.textContent = "/";
+    promptBtnDivEl.appendChild(promptBtnBetween);
+    var promptBtnNEl = document.createElement("button");
+    promptBtnNEl.className = "charBtn";
+    promptBtnNEl.textContent = "N";
+    promptBtnNEl.id = "N";
+    promptBtnDivEl.appendChild(promptBtnNEl);
+    promptEl.appendChild(promptBtnDivEl);
+    quiz.appendChild(promptEl);
+};
+
+var totalReset = function () {
+    combo = 0;
+    pointsMultiplier = 1;
+    currentScore = 0;
+    initials = "";
+    highScoreRecord = {
+        initials: "",
+        highScore: ""
+    };
+    newHighScorePosition = null;
 };
 
 // Calls the retrieveHighScores() function to display the current high score
@@ -522,7 +611,7 @@ quiz.addEventListener("click", function (clicked) {
             incorrectAnswer();
         }
     }
-    if (clicked.target.className == "charBtn") {
+    if (clicked.target.className == "charBtn" && clicked.target.id !== "Y" && clicked.target.id !== "N") {
         // Asks for input for the user's initials and gets the values from the clicked buttons
         cursor.textContent = clicked.target.textContent;
         // Adds the input intials to the initials string so that it can be added to the highScoreRecord object for storage
@@ -557,6 +646,22 @@ quiz.addEventListener("click", function (clicked) {
             highScoreRecord.initials = initials;
             saveHighScore();
             console.log(JSON.stringify(highScoreRecord));
+            retrieveHighScores();
+            displayHighScores();
         }
+    }
+
+    if (clicked.target.id == "Y") {
+        totalReset();
+        beginQuiz();
+    }
+
+    if (clicked.target.id == "N") {
+        displayHighScores();
+    }
+    
+    if (clicked.target.id == "playAgain") {
+        totalReset();
+        beginQuiz();
     }
 });

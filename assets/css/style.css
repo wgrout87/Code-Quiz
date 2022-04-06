@@ -229,7 +229,7 @@ section {
     text-align: center;
 }
 
-.initials {
+.centered {
     display: flex;
     justify-content: center;
 }
@@ -247,8 +247,6 @@ section {
 }
 
 .btnDiv {
-    display: flex;
-    justify-content: center;
     flex-wrap: wrap;
     font-size: 24px;
 }
@@ -256,4 +254,32 @@ section {
 .charBtn {
     width: 50px;
     height: 50px;
+}
+
+.prompt {
+    flex-direction: column;
+    text-align: center;
+}
+
+.promptButtons {
+    display: flex;
+    margin: 0px auto;
+    font-size: 24px;
+}
+
+.btnBetween {
+    padding-top: 13px;
+}
+
+.highScoreListTitle {
+    border-bottom: 5px solid var(--font-color);
+}
+
+.highScoreListItem {
+    display: flex;
+    justify-content: space-between;
+}
+
+.quizSpace .quiz .highScoreListItem p {
+    font-size: 20px;
 }
