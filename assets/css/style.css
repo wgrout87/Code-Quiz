@@ -287,3 +287,7 @@ section {
 #playAgain {
     margin: 0px auto;
 }
+
+#noHighScoreList {
+    margin: 150px auto;
+}

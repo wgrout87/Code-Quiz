@@ -24,6 +24,7 @@ var quizAnswers = [];
 var currentQuestion = 0;
 var quizAnswersValues = [];
 var currentQuestionObj = null;
+// These questionAnswer variable are given value by querySelector every time the addAnswers() function is called. They are also referenced as click targets in the eventListener
 var questionAnswer1 = null;
 var questionAnswer2 = null;
 var questionAnswer3 = null;
@@ -32,7 +33,7 @@ var timeoutID = null;
 var intervalID = null;
 var timerBarWidthDefault = parseInt(getComputedStyle(timerBar).getPropertyValue("width"));
 var timerBarWidth = null;
-var timerBarIncrement = Math.ceil(timerBarWidthDefault/15);
+var timerBarIncrement = Math.ceil(timerBarWidthDefault / 15);
 var timerBarRemainder = timerBarWidthDefault - (14 * timerBarIncrement);
 var timerIntervalID = null;
 var highScores = [];
@@ -53,7 +54,7 @@ var newHighScorePosition = null;
 // Changes display for the game elements, sets values within the display, and adds the first question
 var beginQuiz = function () {
     // Sets the timer
-    timeRemaining = 180;
+    timeRemaining = 3;
     // Reveals the game elements
     score.style.opacity = "1";
     timerBar.style.opacity = "1";
@@ -203,7 +204,6 @@ var correctAnswer = function () {
 
 // Incorrect answer function
 var incorrectAnswer = function () {
-    console.log("Incorrect");
     // Resets the combo
     comboReset();
     // Resets the points multiplier
@@ -248,7 +248,6 @@ var pointsMultiplierAdjust = function () {
 var timerBarShrink = function () {
     // Starts the timer bar shrinking during the first second
     timerBarWidth = timerBarWidthDefault - timerBarIncrement;
-    console.log(timerBarWidth);
     timerBar.style.width = timerBarWidth + "px";
     // setTimeout function will reset the combo and point multiplier if a correct answer isn't given in time
     timeoutID = setTimeout(() => {
@@ -529,6 +528,15 @@ var displayHighScores = function () {
             highScoreListEl.appendChild(highScoreListItemEl);
         }
     }
+
+    else {
+        var noHighScoresEl = document.createElement("p");
+        noHighScoresEl.textContent = "There are no saved high scores yet.";
+        noHighScoresEl.id = "noHighScoreList";
+        noHighScoresEl.className = "centered";
+        quiz.appendChild(noHighScoresEl);
+    }
+
     quiz.appendChild(highScoreListEl);
     var playAgainEl = document.createElement("button");
     playAgainEl.className = "centered";
@@ -616,8 +624,9 @@ retrieveHighScores();
 // Evenet listener for the beginQuiz button
 beginBtn.addEventListener("click", beginQuiz);
 
-// Adds an event listener to the entire quiz section, but only pays attention to questionAnswer class elements 
+// Adds an event listener to the entire quiz section
 quiz.addEventListener("click", function (clicked) {
+    // Checks if the clicked target was an answer to a question and which answer was clicked
     if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer1) {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[0]) {
@@ -626,6 +635,7 @@ quiz.addEventListener("click", function (clicked) {
             incorrectAnswer();
         }
     }
+    // Checks if the clicked target was an answer to a question and which answer was clicked
     if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer2) {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[1]) {
@@ -634,6 +644,7 @@ quiz.addEventListener("click", function (clicked) {
             incorrectAnswer();
         }
     }
+    // Checks if the clicked target was an answer to a question and which answer was clicked
     if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer3) {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[2]) {
@@ -642,6 +653,7 @@ quiz.addEventListener("click", function (clicked) {
             incorrectAnswer();
         }
     }
+    // Checks if the clicked target was an answer to a question and which answer was clicked
     if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer4) {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[3]) {
@@ -690,11 +702,13 @@ quiz.addEventListener("click", function (clicked) {
         }
     }
 
+    // Checks if the Y button from the playAgainPrompt() function was clicked. Resets and starts a new quiz
     if (clicked.target.id == "Y") {
         totalReset();
         beginQuiz();
     }
 
+    // Checks if the N button from the playAgainPrompt() function was clicked. Displays the high score board
     if (clicked.target.id == "N") {
         displayHighScores();
     }
@@ -704,8 +718,3 @@ quiz.addEventListener("click", function (clicked) {
         beginQuiz();
     }
 });
-
-console.log(timerBarWidthDefault);
-console.log(timerBarWidth);
-console.log(timerBarIncrement);
-console.log(timerBarRemainder);
