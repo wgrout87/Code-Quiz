@@ -30,7 +30,10 @@ var questionAnswer3 = null;
 var questionAnswer4 = null;
 var timeoutID = null;
 var intervalID = null;
-var timerBarWidth = 550;
+var timerBarWidthDefault = parseInt(getComputedStyle(timerBar).getPropertyValue("width"));
+var timerBarWidth = null;
+var timerBarIncrement = Math.ceil(timerBarWidthDefault/15);
+var timerBarRemainder = timerBarWidthDefault - (14 * timerBarIncrement);
 var timerIntervalID = null;
 var highScores = [];
 var highScoreRecord = {
@@ -50,7 +53,7 @@ var newHighScorePosition = null;
 // Changes display for the game elements, sets values within the display, and adds the first question
 var beginQuiz = function () {
     // Sets the timer
-    timeRemaining = 10;
+    timeRemaining = 180;
     // Reveals the game elements
     score.style.opacity = "1";
     timerBar.style.opacity = "1";
@@ -244,7 +247,8 @@ var pointsMultiplierAdjust = function () {
 // Shrinks the timer bar 
 var timerBarShrink = function () {
     // Starts the timer bar shrinking during the first second
-    timerBarWidth = 513;
+    timerBarWidth = timerBarWidthDefault - timerBarIncrement;
+    console.log(timerBarWidth);
     timerBar.style.width = timerBarWidth + "px";
     // setTimeout function will reset the combo and point multiplier if a correct answer isn't given in time
     timeoutID = setTimeout(() => {
@@ -254,12 +258,12 @@ var timerBarShrink = function () {
     // Shrinks the timer bar once every second
     intervalID = setInterval(function () {
         // Shrinks the bar by 37 pixels until the last second
-        if (timerBarWidth > 32) {
-            timerBarWidth -= 37;
+        if (timerBarWidth > timerBarRemainder) {
+            timerBarWidth -= timerBarIncrement;
         }
 
         // Sets the bar width to zero for the last second
-        else if (timerBarWidth === 32) {
+        else if (timerBarWidth === timerBarRemainder) {
             timerBarWidth = 0;
         }
         timerBar.style.width = timerBarWidth + "px";
@@ -271,7 +275,7 @@ var timerBarReset = function () {
     // Clears the setTimeout function from line 684
     clearInterval(intervalID);
     // Returns the timer bar to its default width
-    timerBarWidth = 550;
+    timerBarWidth = timerBarWidthDefault;
     timerBar.style.width = timerBarWidth + "px";
     // Clears the setInterval function from line 689
     clearTimeout(timeoutID);
@@ -320,7 +324,7 @@ var results = function () {
     if (currentScore > 0) {
         compareHighScores();
     }
-    
+
     else {
         playAgainPrompt();
     }
@@ -527,22 +531,35 @@ var displayHighScores = function () {
     }
     quiz.appendChild(highScoreListEl);
     var playAgainEl = document.createElement("button");
+    playAgainEl.className = "centered";
     playAgainEl.id = "playAgain";
     playAgainEl.textContent = "Play Again";
     quiz.appendChild(playAgainEl);
 };
 
+// Prompts the player to choose whether or not to play again
 var playAgainPrompt = function () {
+    // Creates a new <div> element that will hold the prompt question and  <div> holding the answer buttons
     var promptEl = document.createElement("div");
+    // Gives it the class names "prompt" and "centered"
     promptEl.className = "prompt centered";
+    // Creates a new <h2> element
     var promptQuestionEl = document.createElement("h2");
+    // Adds the text
     promptQuestionEl.textContent = "Would you like to play again?";
+    // Appends it to the previously created <div>
     promptEl.appendChild(promptQuestionEl);
+    // Creates a new <div> element that will hold the answer buttons
     var promptBtnDivEl = document.createElement("div");
+    // Gives it the class name "promptButtons"
     promptBtnDivEl.className = "promptButtons";
+    // Creates a new <button> element
     var promptBtnYEl = document.createElement("button");
+    // Gives it the class name "charBtn"
     promptBtnYEl.className = "charBtn";
+    // Adds the text
     promptBtnYEl.textContent = "Y";
+    // Gives it the id "Y" for event listener identification
     promptBtnYEl.id = "Y";
     promptBtnDivEl.appendChild(promptBtnYEl);
     var promptBtnBetween = document.createElement("div");
@@ -552,21 +569,44 @@ var playAgainPrompt = function () {
     var promptBtnNEl = document.createElement("button");
     promptBtnNEl.className = "charBtn";
     promptBtnNEl.textContent = "N";
+    // Gives it the id "N" for event listener identification
     promptBtnNEl.id = "N";
     promptBtnDivEl.appendChild(promptBtnNEl);
     promptEl.appendChild(promptBtnDivEl);
     quiz.appendChild(promptEl);
 };
 
+// Resets all global variables for subsequent quizzes. This function should only be called after everything else has been handled
 var totalReset = function () {
     combo = 0;
     pointsMultiplier = 1;
+    timeRemaining = null;
     currentScore = 0;
-    initials = "";
+    quizQuestions = [];
+    quizAnswers = [];
+    currentQuestion = 0;
+    quizAnswersValues = [];
+    currentQuestionObj = null;
+    questionAnswer1 = null;
+    questionAnswer2 = null;
+    questionAnswer3 = null;
+    questionAnswer4 = null;
+    timeoutID = null;
+    intervalID = null;
+    timerBarWidth = null;
+    timerIntervalID = null;
+    highScores = [];
     highScoreRecord = {
         initials: "",
         highScore: ""
     };
+    cursor = null;
+    cursorIntervalID = null;
+    cursorAltIntervalID = null;
+    cursorTimeoutID = null;
+    cursorAltTimeoutID = null;
+    initialsContainer = null;
+    initials = "";
     newHighScorePosition = null;
 };
 
@@ -658,9 +698,14 @@ quiz.addEventListener("click", function (clicked) {
     if (clicked.target.id == "N") {
         displayHighScores();
     }
-    
+
     if (clicked.target.id == "playAgain") {
         totalReset();
         beginQuiz();
     }
 });
+
+console.log(timerBarWidthDefault);
+console.log(timerBarWidth);
+console.log(timerBarIncrement);
+console.log(timerBarRemainder);
