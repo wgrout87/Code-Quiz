@@ -210,7 +210,7 @@ var incorrectAnswer = function () {
     pointsMultiplierReset();
     // Resets the timer bar
     timerBarReset();
-    timeRemaining -= 3;
+    timeRemaining = Math.max(timeRemaining - 3, 0);
     timeRemainingDisplay.textContent = timeRemaining;
 };
 
