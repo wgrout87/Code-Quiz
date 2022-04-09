@@ -87,6 +87,8 @@ var initialsContainer = null;
 var initials = "";
 // newHighScorePosition is referenced by the compareHighScores(), and saveHighScores functions
 var newHighScorePosition = null;
+// positionTracker tracks the position of a new high score
+var positionTracker = null;
 // END GLOBAL VARIABLES
 
 
@@ -94,15 +96,7 @@ var newHighScorePosition = null;
 // Changes display for the game elements, sets values within the display, and adds the first question
 var beginQuiz = function () {
     // Sets the timer
-<<<<<<< HEAD
-<<<<<<< HEAD
-    timeRemaining = 10;
-=======
     timeRemaining = 180;
->>>>>>> main
-=======
-    timeRemaining = 0;
->>>>>>> parent of 61b5016 (changes caused strange bugs - discard)
     // Reveals the game elements
     score.style.opacity = "1";
     timerBar.style.opacity = "1";
@@ -265,7 +259,7 @@ var incorrectAnswer = function () {
     pointsMultiplierReset();
     // Resets the timer bar
     timerBarReset();
-    timeRemaining = Math.max(timeRemaining - 3, 0);
+    timeRemaining = Math.max(timeRemaining - 10, 0);
     timeRemainingDisplay.textContent = timeRemaining;
 };
 // END ANSWER HANDLERS
@@ -405,6 +399,7 @@ var compareHighScores = function () {
         // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
         highScoreRecord.highScore = currentScore;
         newHighScoreDisplay();
+        positionTracker = 0;
     }
     // Compares the current high score against each score in the saved array
     else {
@@ -416,6 +411,8 @@ var compareHighScores = function () {
                 highScoreRecord.highScore = currentScore;
                 // newHighScorePosition is set to the number corresponding to the last position the currentScore was greater than. This value will be used to splice the currentScore into the correct position
                 newHighScorePosition = highScores.length - 1 - i;
+                // If newHighScorePosition is given a value, positionTracker will be given the same value for tracking
+                positionTracker = newHighScorePosition;
             }
         }
     };
@@ -433,6 +430,8 @@ var compareHighScores = function () {
             newHighScoreDisplay();
             // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
             highScoreRecord.highScore = currentScore;
+            // If newHighScorePosition wasn't given a value before, positionTracker will be given a value equal to the new position at the end of the highScores array
+            positionTracker = highScores.length;
         }
 
         if (highScores.length == 10 && newHighScorePosition == null) {
@@ -528,7 +527,11 @@ var displayHighScores = function () {
 
             else {
                 highScoreInitialsEl.textContent = "0" + (i + 1) + ". " + highScores[i].initials;
-            }
+            };
+
+            if (i == positionTracker) {
+                highScoreInitialsEl.textContent += " -New-";
+            };
             // The <p> element is placed in the <li> element
             highScoreListItemEl.appendChild(highScoreInitialsEl);
             // Creates a new <p> element that will hold the actual score of the current score being added to the scoreboard
