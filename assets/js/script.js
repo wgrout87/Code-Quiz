@@ -96,7 +96,11 @@ var highScoreBlink = null;
 // Changes display for the game elements, sets values within the display, and adds the first question
 var beginQuiz = function () {
     // Sets the timer
+<<<<<<< HEAD
     timeRemaining = 10;
+=======
+    timeRemaining = 180;
+>>>>>>> main
     // Reveals the game elements
     score.style.opacity = "1";
     timerBar.style.opacity = "1";
