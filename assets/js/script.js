@@ -755,7 +755,7 @@ beginBtn.addEventListener("click", beginQuiz);
 // Adds an event listener to the entire <quiz> div
 quiz.addEventListener("click", function (clicked) {
     // Checks if the clicked target was an answer to a question and which answer was clicked
-    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer1) {
+    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer1 && questionAnswer1.style.opacity !== "0") {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[0]) {
             correctAnswer();
@@ -765,7 +765,7 @@ quiz.addEventListener("click", function (clicked) {
         }
     }
     // Checks if the clicked target was an answer to a question and which answer was clicked
-    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer2) {
+    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer2 && questionAnswer2.style.opacity !== "0") {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[1]) {
             correctAnswer();
@@ -775,7 +775,7 @@ quiz.addEventListener("click", function (clicked) {
         }
     }
     // Checks if the clicked target was an answer to a question and which answer was clicked
-    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer3) {
+    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer3 && questionAnswer3.style.opacity !== "0") {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[2]) {
             correctAnswer();
@@ -785,7 +785,7 @@ quiz.addEventListener("click", function (clicked) {
         }
     }
     // Checks if the clicked target was an answer to a question and which answer was clicked
-    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer4) {
+    if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer4 && questionAnswer4.style.opacity !== "0") {
         // Checks if the answer is correct against the quizAnswersValues array that was established by the addAnswers() function
         if (quizAnswersValues[3]) {
             correctAnswer();
