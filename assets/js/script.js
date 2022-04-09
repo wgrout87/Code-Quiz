@@ -1,64 +1,104 @@
+// Imports the questions from questions.js
 import { questions } from "./questions.js";
 
+
+
 // BEGIN QUERY SELECTORS
+// <p> whose text is the initials of the saved highest score
 var highScoreInitials = document.querySelector("#highScoreInitials");
+// <p> whose text is the saved highest score
 var highScorePoints = document.querySelector("#highScorePoints");
+// <div> for displaying the current score
 var score = document.querySelector("#score");
+// <p> whose text is the current score
 var currentScoreDisplay = document.querySelector("#currentScore");
+// <div> for holding all of the generated quiz content
 var quiz = document.querySelector("#quiz");
+// <button> for beginning the quiz
 var beginBtn = document.querySelector("#beginBtn");
+// <div> that is the timer bar - no content, only style
 var timerBar = document.querySelector("#timerBar");
-var challengeContent = document.querySelector("#challengeContent");
+// <div> that holds the game content (timer, combo counter, and points multiplier)
+var gameContent = document.querySelector("#gameContent");
+// <span> that will be given text content to display the time remaining
 var timeRemainingDisplay = document.querySelector("#timeRemaining");
+// <span> that will be given text content to display the current combo
 var currentCombo = document.querySelector("#currentCombo");
+// <span> that will be given text content to display the points multiplier
 var currentPointsMultiplier = document.querySelector("#currentPointsMultiplier");
 // END QUERY SELECTORS
 
-// BEGIN GLOBAL VARIABLES
+
+
+// BEGIN GLOBAL VARIABLES - variables with null values are all defined within the functions that use them
+// combo is referenced by the beginQuiz(), comboAdjust(), and comboReset() functions
 var combo = 0;
+// pointsMultiplier is referenced by the beginQuiz(), scoreAdjust(), pointsMultiplierAdjust(), and pointsMultiplierReset() functions
 var pointsMultiplier = 1;
+// timeRemaining is referenced by the beginQuiz(), incorrectAnswer(), runTimer(), and endQuiz() functions
 var timeRemaining = null;
+// currentScore is referenced by the beginQuiz(), scoreAdjust(), results(), and compareHighScores() functions
 var currentScore = 0;
+// quizQuestions is referenced by the randomizeQuestions() and addQuestions() functions
 var quizQuestions = [];
+// quizAnswers is referenced by the randomizeAnswers() and addAnswers() functions
 var quizAnswers = [];
+// currentQuestion is referenced by the addQuestion() function. It is a global variable because each separate call of the addQuestion() function should increment the variable by 1
 var currentQuestion = 0;
+// quizAnswersValues is referenced by the addQuestion(), addAnswers(), and correctAnswer() functions. It is also referenced by the event listeners that handles answer button clicks
 var quizAnswersValues = [];
+// currentQuestionObj is refernced by the addQuestion() and addAnswers() functions
 var currentQuestionObj = null;
 // These questionAnswer variable are given value by querySelector every time the addAnswers() function is called. They are also referenced as click targets in the eventListener
 var questionAnswer1 = null;
 var questionAnswer2 = null;
 var questionAnswer3 = null;
 var questionAnswer4 = null;
+// timeoutID is referenced by the timerBarShrink() and timerBarReset() functions
 var timeoutID = null;
+// intervalID is referenced by the timerBarShrink(), timerBarReset(), and runTimer() functions
 var intervalID = null;
+// timerBarWidthDefault is referenced by the timerBarShrink() and timerBarReset() functions
 var timerBarWidthDefault = parseInt(getComputedStyle(timerBar).getPropertyValue("width"));
+// timerBarWidth is referenced by the timerBarShrink() and timerBarReset() functions
 var timerBarWidth = null;
-var timerBarIncrement = Math.ceil(timerBarWidthDefault / 15);
-var timerBarRemainder = timerBarWidthDefault - (14 * timerBarIncrement);
+// timerIntervalID is referenced by the runTimer() and endQuiz() functions
 var timerIntervalID = null;
+// highScores is referenced by the retrieveHighScores(), compareHighScores(), saveHighScore(), and displayHighScores() functions
 var highScores = [];
+// highScoreRecord is referenced by the compareHighScores() and saveHighScore() functions. It is also referenced by the event listener that handles initials entry
 var highScoreRecord = {
     initials: "",
     highScore: ""
 };
-var cursor = null;
-var cursorIntervalID = null;
-var cursorAltIntervalID = null;
-var cursorTimeoutID = null;
-var cursorAltTimeoutID = null;
+// blink is referenced by the waitForInput() and clearBlink() functions. It is also referenced by the event listener that handles initials entry
+var blink = null;
+// blinkIntervalID is referenced by the waitForInput() and clearBlink() functions
+var blinkIntervalID = null;
+// blinkAltIntervalID is referenced by the waitForInput() and clearBlink() functions
+var blinkAltIntervalID = null;
+// blinkTimeoutID is referenced by the waitForInput() and clearBlink() functions
+var blinkTimeoutID = null;
+// blinkAltTimeoutID is referenced by the waitForInput() and clearBlink() functions
+var blinkAltTimeoutID = null;
+// initialsContainer is referenced by the addInitials() function. It is also referenced by the event listener that handles initials entry
 var initialsContainer = null;
+// initials is referenced by the event listener that handles initials entry. It is a global variable because each time a button is clicked, it should add to the already existing string of initials
 var initials = "";
+// newHighScorePosition is referenced by the compareHighScores(), and saveHighScores functions
 var newHighScorePosition = null;
 // END GLOBAL VARIABLES
+
+
 
 // Changes display for the game elements, sets values within the display, and adds the first question
 var beginQuiz = function () {
     // Sets the timer
-    timeRemaining = 3;
+    timeRemaining = 0;
     // Reveals the game elements
     score.style.opacity = "1";
     timerBar.style.opacity = "1";
-    challengeContent.style.opacity = "1";
+    gameContent.style.opacity = "1";
     // Sets the game element read-outs
     currentScoreDisplay.textContent = currentScore;
     timeRemainingDisplay.textContent = timeRemaining;
@@ -92,7 +132,7 @@ var retrieveHighScores = function () {
     }
 };
 
-// Removes the content of the quiz div
+// Removes the content of the quiz <div>
 var removeQuizContent = function () {
     // Sets variable to identify the last child within the quiz <div>
     var child = quiz.lastElementChild;
@@ -103,7 +143,10 @@ var removeQuizContent = function () {
     }
 };
 
-// This function randomizes the order of the questions from the questions array
+
+
+// BEGIN FUNCTIONS TO ADD QUIZ QUESTIONS AND ANSWERS
+// This function randomizes the order of the questions from the questions array. It creates the quizQuestions array that will contain the 15 questions for the current quiz
 var randomizeQuestions = function () {
     while (quizQuestions.length < 15) {
         // A random number is generated that corresponds to a question in the question array
@@ -115,7 +158,7 @@ var randomizeQuestions = function () {
     }
 };
 
-// Adds a question to the quiz div
+// Adds a question to the quiz div from the quizQuestions array
 var addQuestion = function () {
     // Only 15 questions will be chosen per quiz
     if (currentQuestion < 15) {
@@ -141,7 +184,19 @@ var addQuestion = function () {
     }
 }
 
-// Adds answers to the quiz div
+// This function randomizes the order of the answers for the current question
+var randomizeAnswers = function () {
+    while (quizAnswers.length < 4) {
+        // A random number is generated that corresponds to an answer
+        var possibleAnswer = Math.floor(Math.random() * 4);
+        // The new number possibleAnswer is checked against the existing array and only added in if it is not already present
+        if (quizAnswers.indexOf(possibleAnswer) === -1) {
+            quizAnswers.push(possibleAnswer);
+        }
+    }
+};
+
+// Adds answers to the <quiz> div
 var addAnswers = function () {
     // Creates the <div> to which the questions will be added
     var fourAnswersEl = document.createElement("div");
@@ -169,19 +224,11 @@ var addAnswers = function () {
     questionAnswer3 = document.querySelector("button:nth-child(3)");
     questionAnswer4 = document.querySelector("button:nth-child(4)");
 }
+// END FUNCTIONS TO ADD QUIZ QUESTIONS AND ANSWERS
 
-// This function randomizes the order of the answers for the current question
-var randomizeAnswers = function () {
-    while (quizAnswers.length < 4) {
-        // A random number is generated that corresponds to an answer
-        var possibleAnswer = Math.floor(Math.random() * 4);
-        // The new number possibleAnswer is checked against the existing array and only added in if it is not already present
-        if (quizAnswers.indexOf(possibleAnswer) === -1) {
-            quizAnswers.push(possibleAnswer);
-        }
-    }
-};
 
+
+// BEGIN ANSWER HANDLERS
 // Adds the next question when a correct answer is given
 var correctAnswer = function () {
     // Resets the timer bar
@@ -213,7 +260,11 @@ var incorrectAnswer = function () {
     timeRemaining = Math.max(timeRemaining - 3, 0);
     timeRemainingDisplay.textContent = timeRemaining;
 };
+// END ANSWER HANDLERS
 
+
+
+// BEGIN GAME CONTENT HANDLERS
 // Adjusts the score after a correct answer was chosen
 var scoreAdjust = function (pointValue) {
     currentScore += pointValue * pointsMultiplier;
@@ -246,6 +297,10 @@ var pointsMultiplierAdjust = function () {
 
 // Shrinks the timer bar 
 var timerBarShrink = function () {
+    // Sets the amount the timer bar will shrink for the first 14 seconds
+    var timerBarIncrement = Math.ceil(timerBarWidthDefault / 15);
+    // Sets the amount the timer bar will shrink for the last second
+    var timerBarRemainder = timerBarWidthDefault - (14 * timerBarIncrement);
     // Starts the timer bar shrinking during the first second
     timerBarWidth = timerBarWidthDefault - timerBarIncrement;
     timerBar.style.width = timerBarWidth + "px";
@@ -295,6 +350,9 @@ var runTimer = function () {
         }
     }, 1000)
 };
+// END GAME CONTENT HANDLERS
+
+
 
 // Function handles the endgame logic
 var endQuiz = function () {
@@ -309,7 +367,7 @@ var endQuiz = function () {
     // Hides the game elements
     score.style.opacity = "0";
     timerBar.style.opacity = "0";
-    challengeContent.style.opacity = "0";
+    gameContent.style.opacity = "0";
     removeQuizContent();
     results();
 };
@@ -329,6 +387,9 @@ var results = function () {
     }
 };
 
+
+
+// BEGIN HIGH SCORE HANDLING
 // Compares currentScore to any saved high score values
 var compareHighScores = function () {
     // If highScores is null, the array is empty, and a high score is automatic
@@ -372,6 +433,37 @@ var compareHighScores = function () {
     };
 };
 
+// Saves the new high score in the highScores array
+var saveHighScore = function () {
+    // If there are currently high scores saved and the newHighScorePosition has been given a value, this if statement will insert the new high score into its properly ordered position provided by the compareHighScores() function
+    if (highScores !== null && newHighScorePosition !== null) {
+        highScores.splice(newHighScorePosition, 0, highScoreRecord);
+        console.log(highScores);
+        if (highScores.length > 10) {
+            highScores.pop();
+        };
+        localStorage.setItem("highScores", JSON.stringify(highScores));
+    }
+
+    // If there are currently high scores saved and the currentScore did not beat any of the saved high scores, this if statement will add the highScoreRecord at the end of the list
+    else if (highScores !== null) {
+        highScores.push(highScoreRecord);
+        console.log(highScores);
+        localStorage.setItem("highScores", JSON.stringify(highScores));
+    }
+
+    // If the highScores array is null, this is the first saved high score, and it will simply be saved as the only item in the array
+    else {
+        console.log(highScoreRecord);
+        highScores = [highScoreRecord];
+        localStorage.setItem("highScores", JSON.stringify(highScores));
+    }
+};
+// END HIGH SCORE HANDLING
+
+
+
+// BEGIN HIGH SCORE DISPLAY HANDLING
 var newHighScoreDisplay = function () {
     // Creates a new <p> element
     var displayResultsEl = document.createElement("p");
@@ -393,10 +485,87 @@ var newHighScoreDisplay = function () {
     quiz.appendChild(displayResultsEl);
     // Runs the addInitialsInput() function which adds buttons for each individual letter for initials input
     addInitialsInput();
-    // Runs the waitForInput() function which adds a flashing cursor to any <div> element with the "cursor" class
+    // Runs the waitForInput() function which adds a flashing border-bottom to any <div> element with the "blink" class
     waitForInput();
 };
 
+// Function for displaying the high scores
+var displayHighScores = function () {
+    // Clears out any HTML within the quiz <div>
+    removeQuizContent();
+    // Creates a new <h2> element
+    var displayHighScoresEl = document.createElement("h2");
+    // Adds the text
+    displayHighScoresEl.textContent = "High Scores";
+    // Adds classes for styling
+    displayHighScoresEl.className = "highScoreListTitle centered";
+    // Appends the new element to the quiz <div>
+    quiz.appendChild(displayHighScoresEl);
+    // Checks that there are saved high scores
+    if (highScores !== null) {
+        // Creates a new <ol> element
+        var highScoreListEl = document.createElement("ol");
+        // Loops through the saved highScores array and creates list elements for each entry
+        for (let i = 0; i < highScores.length; i++) {
+            // Creates a new list element
+            var highScoreListItemEl = document.createElement("li");
+            // Gives it a class for styling
+            highScoreListItemEl.className = "highScoreListItem";
+            // Creates a new <p> element that will hold the numbered place and initials of the current score being added to the scoreboard
+            var highScoreInitialsEl = document.createElement("p");
+            // Creates a string with the number corresponding to the numbered place of the the current saved score and adds the initials saved for that score. For visual appeal, a zero needed to be added before numbers 1-9 to maintain equal spacing
+            if (i === 9) {
+                highScoreInitialsEl.textContent = (i + 1) + ". " + highScores[i].initials;
+            }
+
+            else {
+                highScoreInitialsEl.textContent = "0" + (i + 1) + ". " + highScores[i].initials;
+            }
+            // The <p> element is placed in the <li> element
+            highScoreListItemEl.appendChild(highScoreInitialsEl);
+            // Creates a new <p> element that will hold the actual score of the current score being added to the scoreboard
+            var highScoreEl = document.createElement("p");
+            // Adds the text
+            highScoreEl.textContent = highScores[i].highScore;
+            // Appends the new <p> element to the <li> element
+            highScoreListItemEl.appendChild(highScoreEl);
+            // Adds the <li> element to the <ol> element
+            highScoreListEl.appendChild(highScoreListItemEl);
+            // Adds the <ol> element to the quiz <div>
+            quiz.appendChild(highScoreListEl);
+        }
+    }
+
+    // If there are no high scores saved, this function will display that, rather than an empty list
+    else {
+        // Creates a new <p> element
+        var noHighScoresEl = document.createElement("p");
+        // Adds the text
+        noHighScoresEl.textContent = "There are no saved high scores yet.";
+        // Gives it a special ID for styling
+        noHighScoresEl.id = "noHighScoreList";
+        // Gives it a class for styling
+        noHighScoresEl.className = "centered";
+        // Appends the new <p> element to the quiz <div>
+        quiz.appendChild(noHighScoresEl);
+    }
+
+    // Creates a new <button> element that will begin a new game
+    var playAgainEl = document.createElement("button");
+    // Adds a class for styling
+    playAgainEl.className = "centered";
+    // Adds an id for an event listener identification
+    playAgainEl.id = "playAgain";
+    // Adds the text
+    playAgainEl.textContent = "Play Again";
+    // Appends it to the <quiz> div
+    quiz.appendChild(playAgainEl);
+};
+// END HIGH SCORE DISPLAY HANDLING
+
+
+
+// BEGIN INITIALS INPUT HANDLING
 // Adds 3 <div> elements that will be used for initials input. Each <div> will receive its own initial upon entry
 var addInitials = function () {
     // Creates a new <div> element to hold the remaining 3
@@ -406,9 +575,9 @@ var addInitials = function () {
     // Loops until 3 <div> elements are created and added within the previous <div>
     for (let i = 0; i < 3; i++) {
         var initialsEl = document.createElement("div");
-        // The first nested <div> is given the class name "cursor"
+        // The first nested <div> is given the class name "blink"
         if (i === 0) {
-            initialsEl.className = "cursor";
+            initialsEl.className = "blink";
         }
         initialsContainer.appendChild(initialsEl);
     }
@@ -441,113 +610,45 @@ var addInitialsInput = function () {
 
 // This function handles the flashing of the border bottom for the initials input
 var waitForInput = function () {
-    // The current <div> with the "cursor" class is identified and assigned to the cursor global variable
-    cursor = document.querySelector(".cursor");
+    // The current <div> with the "blink" class is identified and assigned to the blink global variable
+    blink = document.querySelector(".blink");
     // The timeout ID for this setTimeout function is captured
-    cursorTimeoutID = setTimeout(() => {
-        // The "cursor" class will be removed in 400ms. The <div> with the "cursor" class will begin with the border bottom established by the CSS for those first 400 ms
-        cursor.classList.remove("cursor");
+    blinkTimeoutID = setTimeout(() => {
+        // The "blink" class will be removed in 400ms. The <div> with the "blink" class will begin with the border bottom established by the CSS for those first 400 ms
+        blink.classList.remove("blink");
     }, 400)
     // The timeout ID for this setTimeout function is captured. After 400ms, an interval will begin
-    cursorAltTimeoutID = setTimeout(() => {
+    blinkAltTimeoutID = setTimeout(() => {
         // The interval ID for this setInterval function is captured
-        cursorIntervalID = setInterval(() => {
-            // Every 800 ms the "cursor" class will be removed. So far the "cursor" class will be removed 400ms in, then 1200ms, 2000ms, 2800ms, etc.
-            cursor.classList.remove("cursor");
+        blinkIntervalID = setInterval(() => {
+            // Every 800 ms the "blink" class will be removed. So far the "blink" class will be removed 400ms in, then 1200ms, 2000ms, 2800ms, etc.
+            blink.classList.remove("blink");
         }, 800);
     }, 400);
     // The interval ID for this setInterval function is captured
-    cursorAltIntervalID = setInterval(() => {
-        // Every 800 ms the "cursor" class will be added again. So it will be added back 800ms in, then 1600ms, 2400ms, etc. This will return it evenly spaced out with the class being removed, causing the flashing effect.
-        cursor.classList.add("cursor");
+    blinkAltIntervalID = setInterval(() => {
+        // Every 800 ms the "blink" class will be added again. So it will be added back 800ms in, then 1600ms, 2400ms, etc. This will return it evenly spaced out with the class being removed, causing the flashing effect.
+        blink.classList.add("blink");
     }, 800);
 };
+// END INITIALS INPUT HANDLING
 
-// Halts the flashing cursor
-var clearCursor = function () {
-    // Removes the cursor class which adds the border bottom
-    cursor.classList.remove("cursor");
+
+
+// Halts the flashing border-bottom
+var clearBlink = function () {
+    // Removes the "blink" class which adds the border bottom
+    blink.classList.remove("blink");
     // Clears intervals and timeouts for a smooth transition when necessary
-    clearInterval(cursorIntervalID);
-    clearInterval(cursorAltIntervalID);
-    clearTimeout(cursorTimeoutID);
-    clearTimeout(cursorAltTimeoutID);
-};
-
-// Saves the new high score in the highScores array
-var saveHighScore = function () {
-    // If there are currently high scores saved and the newHighScorePosition has been given a value, this if statement will insert the new high score into its properly ordered position provided by the compareHighScores() function
-    if (highScores !== null && newHighScorePosition !== null) {
-        highScores.splice(newHighScorePosition, 0, highScoreRecord);
-        console.log(highScores);
-        if (highScores.length > 10) {
-            highScores.pop();
-        };
-        localStorage.setItem("highScores", JSON.stringify(highScores));
-    }
-
-    // If there are currently high scores saved and the currentScore did not beat any of the saved high scores, this if statement will add the highScoreRecord at the end of the list
-    else if (highScores !== null) {
-        highScores.push(highScoreRecord);
-        console.log(highScores);
-        localStorage.setItem("highScores", JSON.stringify(highScores));
-    }
-
-    // If the highScores array is null, this is the first saved high score, and it will simply be saved as the only item in the array
-    else {
-        console.log(highScoreRecord);
-        highScores = [highScoreRecord];
-        localStorage.setItem("highScores", JSON.stringify(highScores));
-    }
-};
-
-var displayHighScores = function () {
-    removeQuizContent();
-    var displayHighScoresEl = document.createElement("h2");
-    displayHighScoresEl.textContent = "High Scores";
-    displayHighScoresEl.className = "highScoreListTitle centered";
-    quiz.appendChild(displayHighScoresEl);
-    var highScoreListEl = document.createElement("ol");
-    highScoreListEl.className = "highScoreList";
-    if (highScores !== null) {
-        for (let i = 0; i < highScores.length; i++) {
-            var highScoreListItemEl = document.createElement("li");
-            highScoreListItemEl.className = "highScoreListItem";
-            var highScoreInitialsEl = document.createElement("p");
-            if (i === 9) {
-                highScoreInitialsEl.textContent = (i + 1) + ". " + highScores[i].initials;
-            }
-
-            else {
-                highScoreInitialsEl.textContent = "0" + (i + 1) + ". " + highScores[i].initials;
-            }
-            highScoreListItemEl.appendChild(highScoreInitialsEl);
-            var highScoreEl = document.createElement("p");
-            highScoreEl.textContent = highScores[i].highScore;
-            highScoreListItemEl.appendChild(highScoreEl);
-            highScoreListEl.appendChild(highScoreListItemEl);
-        }
-    }
-
-    else {
-        var noHighScoresEl = document.createElement("p");
-        noHighScoresEl.textContent = "There are no saved high scores yet.";
-        noHighScoresEl.id = "noHighScoreList";
-        noHighScoresEl.className = "centered";
-        quiz.appendChild(noHighScoresEl);
-    }
-
-    quiz.appendChild(highScoreListEl);
-    var playAgainEl = document.createElement("button");
-    playAgainEl.className = "centered";
-    playAgainEl.id = "playAgain";
-    playAgainEl.textContent = "Play Again";
-    quiz.appendChild(playAgainEl);
+    clearInterval(blinkIntervalID);
+    clearInterval(blinkAltIntervalID);
+    clearTimeout(blinkTimeoutID);
+    clearTimeout(blinkAltTimeoutID);
 };
 
 // Prompts the player to choose whether or not to play again
 var playAgainPrompt = function () {
-    // Creates a new <div> element that will hold the prompt question and  <div> holding the answer buttons
+    // Creates a new <div> element that will hold the prompt question and <div> holding the answer buttons
     var promptEl = document.createElement("div");
     // Gives it the class names "prompt" and "centered"
     promptEl.className = "prompt centered";
@@ -555,7 +656,7 @@ var playAgainPrompt = function () {
     var promptQuestionEl = document.createElement("h2");
     // Adds the text
     promptQuestionEl.textContent = "Would you like to play again?";
-    // Appends it to the previously created <div>
+    // Appends it to the previously created prompt <div>
     promptEl.appendChild(promptQuestionEl);
     // Creates a new <div> element that will hold the answer buttons
     var promptBtnDivEl = document.createElement("div");
@@ -569,22 +670,33 @@ var playAgainPrompt = function () {
     promptBtnYEl.textContent = "Y";
     // Gives it the id "Y" for event listener identification
     promptBtnYEl.id = "Y";
+    // Appends the new button to the promptButtons <div>
     promptBtnDivEl.appendChild(promptBtnYEl);
+    // Creates a new <div> element (this element is purely cosmetic)
     var promptBtnBetween = document.createElement("div");
+    // Gives it the class name "btnBetween"
     promptBtnBetween.className = "btnBetween";
+    // Adds the text
     promptBtnBetween.textContent = "/";
+    // Appends the new element to the promptButtons <div>
     promptBtnDivEl.appendChild(promptBtnBetween);
+    // Creates a new <button> element
     var promptBtnNEl = document.createElement("button");
+    // Gives it the class name "charBtn"
     promptBtnNEl.className = "charBtn";
+    // Adds the text
     promptBtnNEl.textContent = "N";
     // Gives it the id "N" for event listener identification
     promptBtnNEl.id = "N";
+    // Appends the new button to the promptButtons <div>
     promptBtnDivEl.appendChild(promptBtnNEl);
+    // Appends the promptBtn <div> to the prompt <div>
     promptEl.appendChild(promptBtnDivEl);
+    // Appends the prompt <div> to the quiz <div>
     quiz.appendChild(promptEl);
 };
 
-// Resets all global variables for subsequent quizzes. This function should only be called after everything else has been handled
+// Resets the global variables for subsequent quizzes. This function should only be called after everything else has been handled
 var totalReset = function () {
     combo = 0;
     pointsMultiplier = 1;
@@ -603,19 +715,24 @@ var totalReset = function () {
     intervalID = null;
     timerBarWidth = null;
     timerIntervalID = null;
-    highScores = [];
     highScoreRecord = {
         initials: "",
         highScore: ""
     };
-    cursor = null;
-    cursorIntervalID = null;
-    cursorAltIntervalID = null;
-    cursorTimeoutID = null;
-    cursorAltTimeoutID = null;
+    blink = null;
+    blinkIntervalID = null;
+    blinkAltIntervalID = null;
+    blinkTimeoutID = null;
+    blinkAltTimeoutID = null;
     initialsContainer = null;
     initials = "";
     newHighScorePosition = null;
+};
+
+// Resets the quiz global variables and starts a new game
+var playAgain = function () {
+    totalReset();
+    beginQuiz();
 };
 
 // Calls the retrieveHighScores() function to display the current high score
@@ -624,7 +741,7 @@ retrieveHighScores();
 // Evenet listener for the beginQuiz button
 beginBtn.addEventListener("click", beginQuiz);
 
-// Adds an event listener to the entire quiz section
+// Adds an event listener to the entire <quiz> div
 quiz.addEventListener("click", function (clicked) {
     // Checks if the clicked target was an answer to a question and which answer was clicked
     if (clicked.target.className == "questionAnswer" && clicked.target === questionAnswer1) {
@@ -664,35 +781,35 @@ quiz.addEventListener("click", function (clicked) {
     }
     if (clicked.target.className == "charBtn" && clicked.target.id !== "Y" && clicked.target.id !== "N") {
         // Asks for input for the user's initials and gets the values from the clicked buttons
-        cursor.textContent = clicked.target.textContent;
+        blink.textContent = clicked.target.textContent;
         // Adds the input intials to the initials string so that it can be added to the highScoreRecord object for storage
         initials += clicked.target.textContent;
         // This if statement handles entry for the first initial after an initial has been selected
-        if (cursor == initialsContainer.querySelector("div:nth-child(1)")) {
-            // The cursor is halted
-            clearCursor();
-            // The cursor variable is assigned the second initial
-            cursor = initialsContainer.querySelector("div:nth-child(2)");
-            // The cursor class is added to the second initial so that its border can appear and begin to blink
-            cursor.classList.add("cursor");
+        if (blink == initialsContainer.querySelector("div:nth-child(1)")) {
+            // The blinking is halted
+            clearBlink();
+            // The blink variable is assigned the second initial
+            blink = initialsContainer.querySelector("div:nth-child(2)");
+            // The "blink" class is added to the second initial so that its border-bottom can appear and begin to blink
+            blink.classList.add("blink");
             // waitForInput() is called to start the border blinking
             waitForInput();
         }
         // This if statement handles entry for the second initial after an initial has been selected
-        else if (cursor == initialsContainer.querySelector("div:nth-child(2)")) {
-            // The cursor is halted
-            clearCursor();
-            // The cursor variable is assigned the third initial
-            cursor = initialsContainer.querySelector("div:nth-child(3)");
-            // The cursor class is added to the third initial so that its border can appear and begin to blink
-            cursor.classList.add("cursor");
+        else if (blink == initialsContainer.querySelector("div:nth-child(2)")) {
+            // The blink is halted
+            clearBlink();
+            // The blink variable is assigned the third initial
+            blink = initialsContainer.querySelector("div:nth-child(3)");
+            // The blink class is added to the third initial so that its border can appear and begin to blink
+            blink.classList.add("blink");
             // waitForInput() is called to start the border blinking
             waitForInput();
         }
         // This if statement handles entry for the third initial after an initial has been selected
-        else if (cursor == initialsContainer.querySelector("div:nth-child(3)")) {
-            // The cursor is halted
-            clearCursor();
+        else if (blink == initialsContainer.querySelector("div:nth-child(3)")) {
+            // The blink is halted
+            clearBlink();
             // Initials input has been received, and the string is added to the highScoreRecord object for storage
             highScoreRecord.initials = initials;
             saveHighScore();
@@ -704,8 +821,7 @@ quiz.addEventListener("click", function (clicked) {
 
     // Checks if the Y button from the playAgainPrompt() function was clicked. Resets and starts a new quiz
     if (clicked.target.id == "Y") {
-        totalReset();
-        beginQuiz();
+        playAgain();
     }
 
     // Checks if the N button from the playAgainPrompt() function was clicked. Displays the high score board
@@ -714,7 +830,6 @@ quiz.addEventListener("click", function (clicked) {
     }
 
     if (clicked.target.id == "playAgain") {
-        totalReset();
-        beginQuiz();
+        playAgain();
     }
 });

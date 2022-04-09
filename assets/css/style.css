@@ -205,7 +205,7 @@ section {
     transition-timing-function: linear;
 }
 
-.challengeContent {
+.gameContent {
     float: right;
     width: 230px;
     margin-top: 50px;
@@ -213,7 +213,7 @@ section {
     transition-duration: 1000ms;
 }
 
-.challengeContent div {
+.gameContent div {
     margin: 20px;
     padding: 5px;
     font-size: 16px;
@@ -221,7 +221,7 @@ section {
     border-radius: 5px;
 }
 
-.challengeContent .timeRemaining {
+.gameContent .timeRemaining {
     margin-top: 58px;
 }
 
@@ -242,7 +242,7 @@ section {
     text-align: center;
 }
 
-.cursor {
+.blink {
     border-bottom: 5px solid var(--font-color);
 }
 
