@@ -761,6 +761,7 @@ quiz.addEventListener("click", function (clicked) {
             correctAnswer();
         } else {
             incorrectAnswer();
+            questionAnswer1.style.opacity = "0";
         }
     }
     // Checks if the clicked target was an answer to a question and which answer was clicked
@@ -770,6 +771,7 @@ quiz.addEventListener("click", function (clicked) {
             correctAnswer();
         } else {
             incorrectAnswer();
+            questionAnswer2.style.opacity = "0";
         }
     }
     // Checks if the clicked target was an answer to a question and which answer was clicked
@@ -779,6 +781,7 @@ quiz.addEventListener("click", function (clicked) {
             correctAnswer();
         } else {
             incorrectAnswer();
+            questionAnswer3.style.opacity = "0";
         }
     }
     // Checks if the clicked target was an answer to a question and which answer was clicked
@@ -788,6 +791,7 @@ quiz.addEventListener("click", function (clicked) {
             correctAnswer();
         } else {
             incorrectAnswer();
+            questionAnswer4.style.opacity = "0";
         }
     }
     if (clicked.target.className == "charBtn" && clicked.target.id !== "Y" && clicked.target.id !== "N") {
