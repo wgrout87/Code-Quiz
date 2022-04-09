@@ -87,8 +87,6 @@ var initialsContainer = null;
 var initials = "";
 // newHighScorePosition is referenced by the compareHighScores(), and saveHighScores functions
 var newHighScorePosition = null;
-
-var highScoreBlink = null;
 // END GLOBAL VARIABLES
 
 
@@ -97,10 +95,14 @@ var highScoreBlink = null;
 var beginQuiz = function () {
     // Sets the timer
 <<<<<<< HEAD
+<<<<<<< HEAD
     timeRemaining = 10;
 =======
     timeRemaining = 180;
 >>>>>>> main
+=======
+    timeRemaining = 0;
+>>>>>>> parent of 61b5016 (changes caused strange bugs - discard)
     // Reveals the game elements
     score.style.opacity = "1";
     timerBar.style.opacity = "1";
@@ -400,8 +402,6 @@ var results = function () {
 var compareHighScores = function () {
     // If highScores is null, the array is empty, and a high score is automatic
     if (highScores === null) {
-        // Sets the newHighScorePosition to zero
-        highScoreBlink = 0;
         // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
         highScoreRecord.highScore = currentScore;
         newHighScoreDisplay();
@@ -416,31 +416,25 @@ var compareHighScores = function () {
                 highScoreRecord.highScore = currentScore;
                 // newHighScorePosition is set to the number corresponding to the last position the currentScore was greater than. This value will be used to splice the currentScore into the correct position
                 newHighScorePosition = highScores.length - 1 - i;
-                highScoreBlink = newHighScorePosition;
             }
         }
     };
 
     // If newHighScorePosition was given a value, then a new high score was achieved that beat out at least one of the saved high scores
     if (newHighScorePosition !== null) {
+        newHighScoreDisplay();
         // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
         highScoreRecord.highScore = currentScore;
-        highScoreBlink = newHighScorePosition;
-        newHighScoreDisplay();
     }
 
     if (highScores !== null) {
         // If there is space in the highScores array, but the currentScore did not beat any of the saved scores, a new high score was still achieved and newHighScoreDisplay() is called
         if (highScores.length < 10 && newHighScorePosition == null) {
-            // Assigns the newHighScorePosition a value that will equal its new position in the highScores array
-            newHighScorePosition = highScores.length;
-            highScoreBlink = newHighScorePosition;
+            newHighScoreDisplay();
             // Sets the highScore property of the highScoreRecord object in preparation for saving to local storage
             highScoreRecord.highScore = currentScore;
-            newHighScoreDisplay();
         }
 
-        // If there are 10 scores saved and no new high score position was given, a new high score was not achieved
         if (highScores.length == 10 && newHighScorePosition == null) {
             playAgainPrompt();
         }
@@ -487,8 +481,6 @@ var newHighScoreDisplay = function () {
     displayResultsEl.textContent = "New high score!";
     // Appends it to the quiz <div>
     quiz.appendChild(displayResultsEl);
-    
-    blink = null;
     // Runs the addInitials() function which appends three <div> elements for initials input
     addInitials();
     // Creates an <h2> element
@@ -501,7 +493,7 @@ var newHighScoreDisplay = function () {
     quiz.appendChild(displayResultsEl);
     // Runs the addInitialsInput() function which adds buttons for each individual letter for initials input
     addInitialsInput();
-    // Runs the waitForInput() function which adds a flashing border-bottom to any <div> element with the "blinkBorderBottom" class
+    // Runs the waitForInput() function which adds a flashing border-bottom to any <div> element with the "blink" class
     waitForInput();
 };
 
@@ -525,11 +517,8 @@ var displayHighScores = function () {
         for (let i = 0; i < highScores.length; i++) {
             // Creates a new list element
             var highScoreListItemEl = document.createElement("li");
-            if (i == highScoreBlink) {
-                highScoreListItemEl.className = "blinkOpacity";
-            }
-            // Adds a class for styling
-            highScoreListItemEl.classList.add("highScoreListItem");
+            // Gives it a class for styling
+            highScoreListItemEl.className = "highScoreListItem";
             // Creates a new <p> element that will hold the numbered place and initials of the current score being added to the scoreboard
             var highScoreInitialsEl = document.createElement("p");
             // Creates a string with the number corresponding to the numbered place of the the current saved score and adds the initials saved for that score. For visual appeal, a zero needed to be added before numbers 1-9 to maintain equal spacing
@@ -552,7 +541,6 @@ var displayHighScores = function () {
             highScoreListEl.appendChild(highScoreListItemEl);
             // Adds the <ol> element to the quiz <div>
             quiz.appendChild(highScoreListEl);
-            blinkStyle("blinkOpacity");
         }
     }
 
@@ -595,9 +583,9 @@ var addInitials = function () {
     // Loops until 3 <div> elements are created and added within the previous <div>
     for (let i = 0; i < 3; i++) {
         var initialsEl = document.createElement("div");
-        // The first nested <div> is given the class name "blinkBorderBottom"
+        // The first nested <div> is given the class name "blink"
         if (i === 0) {
-            initialsEl.className = "blinkBorderBottom";
+            initialsEl.className = "blink";
         }
         initialsContainer.appendChild(initialsEl);
     }
@@ -630,41 +618,36 @@ var addInitialsInput = function () {
 
 // This function handles the flashing of the border bottom for the initials input
 var waitForInput = function () {
-    blinkStyle("blinkBorderBottom");
-};
-// END INITIALS INPUT HANDLING
-
-
-
-// Blinks by alternatively adding and removing a specified class with specific styling
-var blinkStyle = function (classArg) {
-    // The current <div> with the "classArg" class is identified and assigned to the blink global variable
-    blink = document.querySelector("." + classArg);
+    // The current <div> with the "blink" class is identified and assigned to the blink global variable
+    blink = document.querySelector(".blink");
     // The timeout ID for this setTimeout function is captured
     blinkTimeoutID = setTimeout(() => {
-        // The "classArg" class will be removed in 400ms. The <div> with the "classArg" class will begin with the styling established by the CSS for those first 400 ms
-        blink.classList.remove(classArg);
+        // The "blink" class will be removed in 400ms. The <div> with the "blink" class will begin with the border bottom established by the CSS for those first 400 ms
+        blink.classList.remove("blink");
     }, 400)
     // The timeout ID for this setTimeout function is captured. After 400ms, an interval will begin
     blinkAltTimeoutID = setTimeout(() => {
         // The interval ID for this setInterval function is captured
         blinkIntervalID = setInterval(() => {
-            // Every 800 ms the "classArg" class will be removed. So far the "classArg" class will be removed 400ms in, then 1200ms, 2000ms, 2800ms, etc.
-            blink.classList.remove(classArg);
+            // Every 800 ms the "blink" class will be removed. So far the "blink" class will be removed 400ms in, then 1200ms, 2000ms, 2800ms, etc.
+            blink.classList.remove("blink");
         }, 800);
     }, 400);
     // The interval ID for this setInterval function is captured
     blinkAltIntervalID = setInterval(() => {
-        // Every 800 ms the "classArg" class will be added again. So it will be added back 800ms in, then 1600ms, 2400ms, etc. This will return it evenly spaced out with the class being removed, causing the flashing effect.
-        blink.classList.add(classArg);
+        // Every 800 ms the "blink" class will be added again. So it will be added back 800ms in, then 1600ms, 2400ms, etc. This will return it evenly spaced out with the class being removed, causing the flashing effect.
+        blink.classList.add("blink");
     }, 800);
 };
+// END INITIALS INPUT HANDLING
+
+
 
 // Halts the flashing border-bottom
-// Clears intervals and timeouts for a smooth transition when necessary
-var clearBlink = function (classArg) {
-    // Removes the "classArg" class
-    blink.classList.remove(classArg);
+var clearBlink = function () {
+    // Removes the "blink" class which adds the border bottom
+    blink.classList.remove("blink");
+    // Clears intervals and timeouts for a smooth transition when necessary
     clearInterval(blinkIntervalID);
     clearInterval(blinkAltIntervalID);
     clearTimeout(blinkTimeoutID);
@@ -744,6 +727,7 @@ var totalReset = function () {
         initials: "",
         highScore: ""
     };
+    blink = null;
     blinkIntervalID = null;
     blinkAltIntervalID = null;
     blinkTimeoutID = null;
@@ -810,33 +794,30 @@ quiz.addEventListener("click", function (clicked) {
         initials += clicked.target.textContent;
         // This if statement handles entry for the first initial after an initial has been selected
         if (blink == initialsContainer.querySelector("div:nth-child(1)")) {
-            blink.className = "blinkBorderBottom";
             // The blinking is halted
-            clearBlink("blinkBorderBottom");
+            clearBlink();
             // The blink variable is assigned the second initial
             blink = initialsContainer.querySelector("div:nth-child(2)");
-            // The "blinkBorderBottom" class is added to the second initial so that its border-bottom can appear and begin to blink
-            blink.className = "blinkBorderBottom";
+            // The "blink" class is added to the second initial so that its border-bottom can appear and begin to blink
+            blink.classList.add("blink");
             // waitForInput() is called to start the border blinking
             waitForInput();
         }
         // This if statement handles entry for the second initial after an initial has been selected
         else if (blink == initialsContainer.querySelector("div:nth-child(2)")) {
-            blink.className = "blinkBorderBottom";
             // The blink is halted
-            clearBlink("blinkBorderBottom");
+            clearBlink();
             // The blink variable is assigned the third initial
             blink = initialsContainer.querySelector("div:nth-child(3)");
-            // The "blinkBorderBottom" class is added to the third initial so that its border can appear and begin to blink
-            blink.className = "blinkBorderBottom";
+            // The blink class is added to the third initial so that its border can appear and begin to blink
+            blink.classList.add("blink");
             // waitForInput() is called to start the border blinking
             waitForInput();
         }
         // This if statement handles entry for the third initial after an initial has been selected
         else if (blink == initialsContainer.querySelector("div:nth-child(3)")) {
-            blink.className = "blinkBorderBottom";
             // The blink is halted
-            clearBlink("blinkBorderBottom");
+            clearBlink();
             // Initials input has been received, and the string is added to the highScoreRecord object for storage
             highScoreRecord.initials = initials;
             saveHighScore();
@@ -857,7 +838,6 @@ quiz.addEventListener("click", function (clicked) {
     }
 
     if (clicked.target.id == "playAgain") {
-        clearBlink("blinkOpacity");
         playAgain();
     }
 });

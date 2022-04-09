@@ -242,12 +242,8 @@ section {
     text-align: center;
 }
 
-.blinkBorderBottom {
+.blink {
     border-bottom: 5px solid var(--font-color);
-}
-
-.blinkOpacity {
-    opacity: 0;
 }
 
 .btnDiv {
