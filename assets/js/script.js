@@ -94,7 +94,7 @@ var newHighScorePosition = null;
 // Changes display for the game elements, sets values within the display, and adds the first question
 var beginQuiz = function () {
     // Sets the timer
-    timeRemaining = 0;
+    timeRemaining = 180;
     // Reveals the game elements
     score.style.opacity = "1";
     timerBar.style.opacity = "1";
