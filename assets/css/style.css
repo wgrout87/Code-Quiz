@@ -1,3 +1,4 @@
+/* Variables for the two colors used */
 :root {
     --background: #101111;
     --font-color: #e9ebed;
@@ -10,25 +11,47 @@
     padding: 0;
 }
 
+/* Remove button default styles */
+button {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    ;
+}
+
+/* Generic style for centering content */
+.centered {
+    display: flex;
+    justify-content: center;
+}
+
+/* Basic styling for the page */
 body {
-    font-family: 'Press Start 2P', sans-serif;
+    font-family: 'Press Start 2P',Arial, Helvetica, sans-serif;
     color: var(--font-color);
     background-color: var(--background);
 }
 
+
+/* BEGIN HEADER STYLES */
 header {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     border-bottom: 5px solid var(--font-color);
     margin: 0 40px;
 }
 
+/* Styles "Timed Code Quiz" */
 header h1 {
     font-size: 4vw;
     padding: 10px 0;
 }
 
+/* Styles the display on the right side of the header showing the current high score */
 .highScore {
     display: flex;
     flex-direction: column;
@@ -37,16 +60,21 @@ header h1 {
     font-size: .8vw;
 }
 
+/* Styles the initials and score */
 .record {
     display: flex;
     justify-content: space-between;
     font-size: 2vw;
 }
 
+/* Pushes the button to "view the scoreboard" to the right for more visual appeal */
 .highScore button {
     text-align: right;
 }
+/* END HEADER STYLES */
 
+
+/* Section holds everything in the body except the header */
 section {
     width: 800px;
     margin: 0 auto;
@@ -54,6 +82,7 @@ section {
     justify-content: space-between;
 }
 
+/* Styles for the current score display */
 .score {
     width: 550px;
     margin: 50px 0 20px 0;
@@ -68,6 +97,7 @@ section {
     transition-duration: 1000ms;
 }
 
+/* Styles for the large white box in which the instructions, beginBtn, and later the quiz content go */
 .quizSpace {
     width: 550px;
     height: 400px;
@@ -78,6 +108,337 @@ section {
     flex-direction: column;
     justify-content: space-between;
 }
+
+/* Styles for all <h2> elements that ends up in the quiz <div> */
+.quizSpace .quiz h2 {
+    font-size: 1.4vw;
+    font-weight: normal;
+    margin-bottom: 10px;
+}
+
+/* Styles for all <p> elements that ends up in the quiz <div> */
+.quizSpace .quiz p {
+    font-size: .8vw;
+    line-height: 1.5;
+    word-spacing: 4px;
+}
+
+/* Styles for the "Take the Quiz" button */
+.quizSpace .beginBtn {
+    margin: 25px auto;
+    font-size: 1.4vw;
+    padding: 5px;
+    border: 2px solid var(--font-color);
+    border-radius: 5px;
+}
+
+/* Styles the <div> element in which all of the answers will be placed */
+.quizSpace .quiz .quizAnswers {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Styles the answer buttons */
+.quizSpace .quiz .quizAnswers button {
+    margin: 5px 20px 0px 20px;
+    text-align: left;
+    padding: 5px;
+    border-radius: 5px;
+    word-spacing: 4px;
+}
+
+/* Adds a hover style on the answer buttons */
+.quizSpace .quiz .quizAnswers button:hover {
+    background-color: var(--font-color);
+    color: var(--background);
+}
+
+/* Font size for the answer buttons */
+.quizSpace .quiz .questionAnswer {
+    font-size: .8vw;
+}
+
+/* Styles for the timer bar */
+#timerBar {
+    background-color: var(--font-color);
+    height: 5px;
+    width: 550px;
+    margin-top: 20px;
+    opacity: 0;
+    transition-duration: 1000ms;
+    transition-timing-function: linear;
+}
+
+/* Styles for the <div> containing all of the game content (timer, combo, points multiplier) */
+.gameContent {
+    float: right;
+    width: 300px;
+    margin-top: 50px;
+    opacity: 0;
+    transition-duration: 1000ms;
+}
+
+/* Styles for <div> elements within the gameContent <div> */
+.gameContent div {
+    margin: 20px;
+    padding: 5px;
+    font-size: 1.2vw;
+    border: 2px solid var(--font-color);
+    border-radius: 5px;
+}
+
+/* Specific style for the time remaining <div>, which is at the top */
+.gameContent .timeRemaining {
+    margin-top: 0px;
+}
+
+/* Style for the results screen */
+.results {
+    text-align: center;
+}
+
+/* Style for the <div> elements that will display the initials chosen by the user */
+.initials div {
+    margin: 5px;
+    height: 75px;
+    width: 50px;
+    font-size: 60px;
+    text-align: center;
+}
+
+/* Blink class for the blinking cursor displayed during initials input */
+.blink {
+    border-bottom: 5px solid var(--font-color);
+}
+
+/* Style for the <div> element that will hold all of the buttons for initials input */
+.btnDiv {
+    flex-wrap: wrap;
+    font-size: 24px;
+}
+
+/* Style for button size during initials input */
+.charBtn {
+    width: 50px;
+    height: 50px;
+}
+
+/* Stacks the elements for the "Play Again?" prompt */
+.playAgainPrompt {
+    flex-direction: column;
+    text-align: center;
+}
+
+/* Style for the <div> element that will contain the "Y/N" buttons in the "Play Again?" prompt */
+.promptButtons {
+    display: flex;
+    margin: 0px auto;
+    font-size: 24px;
+}
+
+/* Style for the stylistic "/" used in the "Play Again?" prompt */
+.btnBetween {
+    padding-top: 13px;
+}
+
+/* Adds a border-bottom to the title on the high scores screen */
+.highScoreListTitle {
+    border-bottom: 5px solid var(--font-color);
+}
+
+/* Spaces out the initials and scores on the high scores screen */
+.highScoreListItem {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Styles the font-size for the saved entries on the high scores screen */
+.quizSpace .quiz .highScoreListItem p {
+    font-size: 1vw;
+}
+
+/* Font size for the "Play Again" button on the high score screen */
+.quizSpace .quiz #playAgain {
+    font-size: 1vw;
+    margin: 0px auto;
+}
+
+/* Styles the display notifying the user that there are no high scores yet */
+#noHighScoreList {
+    margin: 130px auto;
+    text-align: center;
+}
+
+/* MEDIA QUERIES FOR SMALLER SCREENS */
+/* BEGIN ADJUSTMENTS FOR SMALLER MONITORS AND BELOW */
+@media screen and (max-width: 980px) {
+    section {
+        width: 700px;
+    }
+
+    .score {
+        width: 500px;
+        margin: 50px 0 20px 0;
+        padding: 5px;
+    }
+    
+    .quizSpace {
+        width: 500px;
+        padding: 5px;
+    }
+    
+    .quizSpace .quiz h2 {
+        font-size: 2vw;
+    }
+
+    .quizSpace .quiz p {
+        font-size: 1.5vw;
+    }
+    
+    .quizSpace .beginBtn {
+        font-size: 2vw;
+    }
+    
+    .quizSpace .quiz .questionAnswer {
+        font-size: 1.5vw;
+    }
+    
+    #timerBar {
+        width: 500px;
+        margin-top: 20px;
+    }
+    
+    .gameContent {
+        width: 180px;
+    }
+
+    .quizSpace .quiz .highScoreListItem p {
+        font-size: 1.8vw;
+    }
+
+    .quizSpace .quiz #playAgain {
+        font-size: 1.8vw;
+    }
+}
+/* END ADJUSTMENTS FOR SMALLER MONITORS AND BELOW */
+
+/* BEGIN ADJUSTMENTS FOR TABLETS AND BELOW */
+@media screen and (max-width: 768px) {
+    header {
+        flex-direction: column;
+    }
+
+    .highScore {
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 1.6vw;
+        width: 100%;
+    }
+    
+    section {
+        width: 560px;
+    }
+
+    .score {
+        width: 380px;
+        margin: 50px 0 20px 0;
+        padding: 5px;
+    }
+    
+    .quizSpace {
+        width: 380px;
+        padding: 5px;
+    }
+    
+    .quizSpace .quiz h2 {
+        font-size: 2.3vw;
+    }
+    
+    .quizSpace .quiz p {
+        font-size: 1.7vw;
+    }
+    
+    .quizSpace .beginBtn {
+        font-size: 2.3vw;
+    }
+    
+    .quizSpace .quiz .questionAnswer {
+        font-size: 2vw;
+    }
+
+    #timerBar {
+        width: 380px;
+        margin-top: 20px;
+    }
+
+    .gameContent {
+        width: 160px;
+    }
+
+    .gameContent span {
+        font-size: 1.5vw;
+    }
+}
+/* END ADJUSTMENTS FOR TABLETS AND BELOW */
+
+/* BEGIN ADJUSTMENTS FOR MOBILE PHONES AND BELOW */
+@media screen and (max-width: 575px) {
+    section {
+        width: 360px;
+    }
+    .score {
+        width: 260px;
+        margin: 50px 0 20px 0;
+        padding: 5px;
+    }
+    
+    .quizSpace {
+        width: 260px;
+        padding: 5px;
+    }
+    
+    .quizSpace .quiz h2 {
+        font-size: 3vw;
+    }
+
+    .quizSpace .quiz p {
+        font-size: 2.4vw;
+    }
+    
+    .quizSpace .beginBtn {
+        font-size: 3vw;
+    }
+
+    #timerBar {
+        width: 260px;
+        margin-top: 20px;
+    }
+    
+    .gameContent {
+        width: 100px;
+    }
+    
+    .gameContent div {
+        font-size: 1vw;
+    }
+    
+    .charBtn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .quizSpace .quiz .highScoreListItem p {
+        font-size: 2.4vw;
+    }
+
+    .quizSpace .quiz #playAgain {
+        font-size: 2.4vw;
+    }
+}
+
+
 
 /* BEGIN FADE-IN EFFECT STYLES */
 /* These fade-in effects were learned from https://blog.hubspot.com/website/css-fade-in */
@@ -141,325 +502,3 @@ section {
 }
 
 /* END FADE-IN EFFECT STYLES */
-
-.quizSpace .quiz h2 {
-    font-size: 1.4vw;
-    font-weight: normal;
-    margin-bottom: 10px;
-}
-
-.quizSpace .quiz p {
-    font-size: .8vw;
-    line-height: 1.5;
-    word-spacing: 4px;
-}
-
-.quizSpace .quiz .questionAnswer {
-    font-size: .8vw;
-}
-    
-.quizSpace .quiz #playAgain {
-    font-size: 1vw;
-}
-
-/* Remove button default styles */
-button {
-    background: none;
-    color: inherit;
-    border: none;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-    ;
-}
-
-.quizSpace .beginBtn {
-    margin: 25px auto;
-    font-size: 1.4vw;
-    padding: 5px;
-    border: 2px solid var(--font-color);
-    border-radius: 5px;
-}
-
-.quizSpace .quiz .quizAnswers {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.quizSpace .quiz .quizAnswers button {
-    margin: 5px 20px 0px 20px;
-    text-align: left;
-    padding: 5px;
-    border-radius: 5px;
-    word-spacing: 4px;
-}
-
-.quizSpace .quiz .quizAnswers button:hover {
-    background-color: var(--font-color);
-    color: var(--background);
-}
-
-#timerBar {
-    background-color: var(--font-color);
-    height: 5px;
-    width: 550px;
-    margin-top: 20px;
-    opacity: 0;
-    transition-duration: 1000ms;
-    transition-timing-function: linear;
-}
-
-.gameContent {
-    float: right;
-    width: 300px;
-    margin-top: 50px;
-    opacity: 0;
-    transition-duration: 1000ms;
-}
-
-.gameContent div {
-    margin: 20px;
-    padding: 5px;
-    font-size: 1.2vw;
-    border: 2px solid var(--font-color);
-    border-radius: 5px;
-}
-
-.gameContent .timeRemaining {
-    margin-top: 0px;
-}
-
-.results {
-    text-align: center;
-}
-
-.centered {
-    display: flex;
-    justify-content: center;
-}
-
-.initials div {
-    margin: 5px;
-    height: 75px;
-    width: 50px;
-    font-size: 60px;
-    text-align: center;
-}
-
-.blink {
-    border-bottom: 5px solid var(--font-color);
-}
-
-.btnDiv {
-    flex-wrap: wrap;
-    font-size: 24px;
-}
-
-.charBtn {
-    width: 50px;
-    height: 50px;
-}
-
-.prompt {
-    flex-direction: column;
-    text-align: center;
-}
-
-.promptButtons {
-    display: flex;
-    margin: 0px auto;
-    font-size: 24px;
-}
-
-.btnBetween {
-    padding-top: 13px;
-}
-
-.highScoreListTitle {
-    border-bottom: 5px solid var(--font-color);
-}
-
-.highScoreListItem {
-    display: flex;
-    justify-content: space-between;
-}
-
-.quizSpace .quiz .highScoreListItem p {
-    font-size: 1vw;
-}
-
-#playAgain {
-    margin: 0px auto;
-}
-
-#noHighScoreList {
-    margin: 150px auto;
-}
-
-/* MEDIA QUERIES FOR SMALLER SCREENS */
-/* BEGIN ADJUSTMENTS FOR SMALLER MONITORS AND BELOW */
-@media screen and (max-width: 980px) {
-    section {
-        width: 700px;
-    }
-    .score {
-        width: 500px;
-        margin: 50px 0 20px 0;
-        padding: 5px;
-    }
-    
-    .quizSpace {
-        width: 500px;
-        padding: 5px;
-    }
-    
-    .quizSpace .beginBtn {
-        font-size: 2vw;
-    }
-
-    .quizSpace .quiz h2 {
-        font-size: 2vw;
-    }
-
-    .quizSpace .quiz p {
-        font-size: 1.5vw;
-    }
-    
-    .quizSpace .quiz .questionAnswer {
-        font-size: 1.5vw;
-    }
-
-    .quizSpace .quiz .highScoreListItem p {
-        font-size: 1.8vw;
-    }
-
-    .quizSpace .quiz #playAgain {
-        font-size: 1.8vw;
-    }
-
-    #timerBar {
-        width: 500px;
-        margin-top: 20px;
-    }
-
-    .gameContent {
-        width: 180px;
-    }
-}
-/* END ADJUSTMENTS FOR SMALLER MONITORS AND BELOW */
-
-/* BEGIN ADJUSTMENTS FOR TABLETS AND BELOW */
-@media screen and (max-width: 768px) {
-    header {
-        flex-direction: column;
-    }
-
-    .highScore {
-        flex-direction: row;
-        justify-content: space-between;
-        font-size: 1.6vw;
-        width: 100%;
-    }
-    
-    section {
-        width: 560px;
-    }
-    .score {
-        width: 380px;
-        margin: 50px 0 20px 0;
-        padding: 5px;
-    }
-    
-    .quizSpace {
-        width: 380px;
-        padding: 5px;
-    }
-    
-    .quizSpace .beginBtn {
-        font-size: 2.3vw;
-    }
-    
-    .quizSpace .quiz h2 {
-        font-size: 2.3vw;
-    }
-
-    .quizSpace .quiz p {
-        font-size: 1.7vw;
-    }
-    
-    .quizSpace .quiz .questionAnswer {
-        font-size: 2vw;
-    }
-
-    #timerBar {
-        width: 380px;
-        margin-top: 20px;
-    }
-
-    .gameContent {
-        width: 160px;
-    }
-
-    .gameContent span {
-        font-size: 1.5vw;
-    }
-}
-/* END ADJUSTMENTS FOR TABLETS AND BELOW */
-
-/* BEGIN ADJUSTMENTS FOR MOBILE PHONES AND BELOW */
-@media screen and (max-width: 575px) {
-    section {
-        width: 360px;
-    }
-    .score {
-        width: 260px;
-        margin: 50px 0 20px 0;
-        padding: 5px;
-    }
-    
-    .quizSpace {
-        width: 260px;
-        padding: 5px;
-    }
-    
-    .quizSpace .beginBtn {
-        font-size: 3vw;
-    }
-    
-    .quizSpace .quiz h2 {
-        font-size: 3vw;
-    }
-
-    .quizSpace .quiz p {
-        font-size: 2.4vw;
-    }
-
-    .quizSpace .quiz .highScoreListItem p {
-        font-size: 2.4vw;
-    }
-
-    .quizSpace .quiz #playAgain {
-        font-size: 2.4vw;
-    }
-
-    #timerBar {
-        width: 260px;
-        margin-top: 20px;
-    }
-
-    .gameContent {
-        width: 100px;
-    }
-    
-    .gameContent div {
-        font-size: 1vw;
-    }
-
-    .charBtn {
-        width: 40px;
-        height: 40px;
-    }
-}

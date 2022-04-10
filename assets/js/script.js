@@ -675,7 +675,7 @@ var playAgainPrompt = function () {
     // Creates a new <div> element that will hold the prompt question and <div> holding the answer buttons
     var promptEl = document.createElement("div");
     // Gives it the class names "prompt" and "centered"
-    promptEl.className = "prompt centered";
+    promptEl.className = "playAgainPrompt centered";
     // Creates a new <h2> element
     var promptQuestionEl = document.createElement("h2");
     // Adds the text
