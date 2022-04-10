@@ -8,6 +8,8 @@ import { questions } from "./questions.js";
 var highScoreInitials = document.querySelector("#highScoreInitials");
 // <p> whose text is the saved highest score
 var highScorePoints = document.querySelector("#highScorePoints");
+// <button> that takes the user to view the scoreboard
+var viewTheScoreboard = document.querySelector("#viewTheScoreboard");
 // <div> for displaying the current score
 var score = document.querySelector("#score");
 // <p> whose text is the current score
@@ -89,6 +91,8 @@ var initials = "";
 var newHighScorePosition = null;
 // positionTracker tracks the position of a new high score
 var positionTracker = null;
+// initialsInput is referenced by addInitials. It is also referenced by the event listener that handles the view the scoreboard button
+var initialsInput = false;
 // END GLOBAL VARIABLES
 
 
@@ -221,10 +225,10 @@ var addAnswers = function () {
     quiz.appendChild(fourAnswersEl);
     console.log(quizAnswersValues);
     // Establishes references for each of the newly added <button> elements
-    questionAnswer1 = document.querySelector("button:nth-child(1)");
-    questionAnswer2 = document.querySelector("button:nth-child(2)");
-    questionAnswer3 = document.querySelector("button:nth-child(3)");
-    questionAnswer4 = document.querySelector("button:nth-child(4)");
+    questionAnswer1 = document.querySelector("#quiz button:nth-child(1)");
+    questionAnswer2 = document.querySelector("#quiz button:nth-child(2)");
+    questionAnswer3 = document.querySelector("#quiz button:nth-child(3)");
+    questionAnswer4 = document.querySelector("#quiz button:nth-child(4)");
 }
 // END FUNCTIONS TO ADD QUIZ QUESTIONS AND ANSWERS
 
@@ -358,21 +362,29 @@ var runTimer = function () {
 
 // Function handles the endgame logic
 var endQuiz = function () {
-    // Stops the timer
-    clearInterval(timerIntervalID);
+    stopTimer();
     // Resets the timer bar
     timerBarReset();
     // Converts timeRemaining to a value for points
     var timeRemainingPoints = timeRemaining * 10;
     // Adds points for the time remaining adjusted by the points multiplier
     scoreAdjust(timeRemainingPoints);
-    // Hides the game elements
-    score.style.opacity = "0";
-    timerBar.style.opacity = "0";
-    gameContent.style.opacity = "0";
+    hideGameContent();
     removeQuizContent();
     results();
 };
+
+var stopTimer = function () {
+    // Stops the timer
+    clearInterval(timerIntervalID);
+}
+
+// Hides the game elements
+var hideGameContent = function () {
+    score.style.opacity = "0";
+    timerBar.style.opacity = "0";
+    gameContent.style.opacity = "0";
+}
 
 // Displays the quiz results and prompts for high score initials if applicable
 var results = function () {
@@ -579,6 +591,7 @@ var displayHighScores = function () {
 // BEGIN INITIALS INPUT HANDLING
 // Adds 3 <div> elements that will be used for initials input. Each <div> will receive its own initial upon entry
 var addInitials = function () {
+    initialsInput = true;
     // Creates a new <div> element to hold the remaining 3
     initialsContainer = document.createElement("div");
     // Gives it the class name "initials"
@@ -642,9 +655,6 @@ var waitForInput = function () {
         blink.classList.add("blink");
     }, 800);
 };
-// END INITIALS INPUT HANDLING
-
-
 
 // Halts the flashing border-bottom
 var clearBlink = function () {
@@ -656,6 +666,9 @@ var clearBlink = function () {
     clearTimeout(blinkTimeoutID);
     clearTimeout(blinkAltTimeoutID);
 };
+// END INITIALS INPUT HANDLING
+
+
 
 // Prompts the player to choose whether or not to play again
 var playAgainPrompt = function () {
@@ -738,6 +751,8 @@ var totalReset = function () {
     initialsContainer = null;
     initials = "";
     newHighScorePosition = null;
+    positionTracker = null;
+    initialsInput = false;
 };
 
 // Resets the quiz global variables and starts a new game
@@ -749,8 +764,25 @@ var playAgain = function () {
 // Calls the retrieveHighScores() function to display the current high score
 retrieveHighScores();
 
+
+
+// BEGIN EVENT LISTENERS
 // Evenet listener for the beginQuiz button
 beginBtn.addEventListener("click", beginQuiz);
+
+
+viewTheScoreboard.addEventListener("click", function () {
+    if (initialsInput === false) {
+        if (beginBtn) {
+            beginBtn.remove();
+        };
+        timerBarReset();
+        stopTimer();
+        hideGameContent();
+        displayHighScores();
+        totalReset();
+    }
+});
 
 // Adds an event listener to the entire <quiz> div
 quiz.addEventListener("click", function (clicked) {
@@ -848,3 +880,4 @@ quiz.addEventListener("click", function (clicked) {
         playAgain();
     }
 });
+// END EVENT LISTENERS

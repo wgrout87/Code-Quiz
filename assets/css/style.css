@@ -18,33 +18,33 @@ body {
 
 header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    position: relative;
     border-bottom: 5px solid var(--font-color);
     margin: 0 40px;
 }
 
 header h1 {
-    font-size: 60px;
+    font-size: 4vw;
     padding: 10px 0;
 }
 
 .highScore {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translate(0%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     width: 20%;
+    font-size: .8vw;
 }
 
 .record {
     display: flex;
     justify-content: space-between;
-    font-size: 24px;
+    font-size: 2vw;
 }
 
-.highScore a {
-    float: right;
+.highScore button {
+    text-align: right;
 }
 
 section {
@@ -61,7 +61,7 @@ section {
     border-radius: 5px;
     display: flex;
     justify-content: space-between;
-    font-size: 24px;
+    font-size: 1.3vw;
     padding: 5px;
     align-items: center;
     opacity: 0;
@@ -143,19 +143,27 @@ section {
 /* END FADE-IN EFFECT STYLES */
 
 .quizSpace .quiz h2 {
-    font-size: 24px;
+    font-size: 1.4vw;
     font-weight: normal;
     margin-bottom: 10px;
 }
 
 .quizSpace .quiz p {
-    font-size: 14px;
+    font-size: .8vw;
     line-height: 1.5;
     word-spacing: 4px;
 }
 
+.quizSpace .quiz .questionAnswer {
+    font-size: .8vw;
+}
+    
+.quizSpace .quiz #playAgain {
+    font-size: 1vw;
+}
+
 /* Remove button default styles */
-.quizSpace button {
+button {
     background: none;
     color: inherit;
     border: none;
@@ -167,8 +175,8 @@ section {
 }
 
 .quizSpace .beginBtn {
-    margin: 50px auto;
-    font-size: 24px;
+    margin: 25px auto;
+    font-size: 1.4vw;
     padding: 5px;
     border: 2px solid var(--font-color);
     border-radius: 5px;
@@ -183,7 +191,6 @@ section {
 
 .quizSpace .quiz .quizAnswers button {
     margin: 5px 20px 0px 20px;
-    font-size: 14px;
     text-align: left;
     padding: 5px;
     border-radius: 5px;
@@ -207,7 +214,7 @@ section {
 
 .gameContent {
     float: right;
-    width: 230px;
+    width: 300px;
     margin-top: 50px;
     opacity: 0;
     transition-duration: 1000ms;
@@ -216,13 +223,13 @@ section {
 .gameContent div {
     margin: 20px;
     padding: 5px;
-    font-size: 16px;
+    font-size: 1.2vw;
     border: 2px solid var(--font-color);
     border-radius: 5px;
 }
 
 .gameContent .timeRemaining {
-    margin-top: 58px;
+    margin-top: 0px;
 }
 
 .results {
@@ -281,7 +288,7 @@ section {
 }
 
 .quizSpace .quiz .highScoreListItem p {
-    font-size: 20px;
+    font-size: 1vw;
 }
 
 #playAgain {
@@ -290,4 +297,116 @@ section {
 
 #noHighScoreList {
     margin: 150px auto;
+}
+
+/* MEDIA QUERIES FOR SMALLER SCREENS */
+/* BEGIN ADJUSTMENTS FOR SMALLER MONITORS AND BELOW */
+@media screen and (max-width: 980px) {
+    section {
+        width: 700px;
+    }
+    .score {
+        width: 500px;
+        margin: 50px 0 20px 0;
+        padding: 5px;
+    }
+    
+    .quizSpace {
+        width: 500px;
+        padding: 5px;
+    }
+
+    .quizSpace .quiz p {
+        font-size: 1.5vw;
+    }
+    
+    .quizSpace .quiz .questionAnswer {
+        font-size: 1.5vw;
+    }
+
+    #timerBar {
+        width: 500px;
+        margin-top: 20px;
+    }
+
+    .gameContent {
+        width: 180px;
+    }
+}
+/* END ADJUSTMENTS FOR SMALLER MONITORS AND BELOW */
+
+/* BEGIN ADJUSTMENTS FOR TABLETS AND BELOW */
+@media screen and (max-width: 768px) {
+    header {
+        flex-direction: column;
+    }
+
+    .highScore {
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 1.6vw;
+        width: 100%;
+    }
+    
+    section {
+        width: 560px;
+    }
+    .score {
+        width: 380px;
+        margin: 50px 0 20px 0;
+        padding: 5px;
+    }
+    
+    .quizSpace {
+        width: 380px;
+        padding: 5px;
+    }
+
+    .quizSpace .quiz p {
+        font-size: 2vw;
+    }
+    
+    .quizSpace .quiz .questionAnswer {
+        font-size: 2vw;
+    }
+
+    #timerBar {
+        width: 380px;
+        margin-top: 20px;
+    }
+
+    .gameContent {
+        width: 160px;
+    }
+}
+/* END ADJUSTMENTS FOR TABLETS AND BELOW */
+
+/* BEGIN ADJUSTMENTS FOR MOBILE PHONES AND BELOW */
+@media screen and (max-width: 575px) {
+    section {
+        width: 360px;
+    }
+    .score {
+        width: 260px;
+        margin: 50px 0 20px 0;
+        padding: 5px;
+    }
+    
+    .quizSpace {
+        width: 260px;
+        padding: 5px;
+    }
+
+    #timerBar {
+        width: 260px;
+        margin-top: 20px;
+    }
+
+    .gameContent {
+        width: 100px;
+    }
+    
+    .gameContent div {
+        font-size: 1vw;
+    }
 }
