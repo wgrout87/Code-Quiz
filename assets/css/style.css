@@ -315,6 +315,14 @@ button {
         width: 500px;
         padding: 5px;
     }
+    
+    .quizSpace .beginBtn {
+        font-size: 2vw;
+    }
+
+    .quizSpace .quiz h2 {
+        font-size: 2vw;
+    }
 
     .quizSpace .quiz p {
         font-size: 1.5vw;
@@ -322,6 +330,14 @@ button {
     
     .quizSpace .quiz .questionAnswer {
         font-size: 1.5vw;
+    }
+
+    .quizSpace .quiz .highScoreListItem p {
+        font-size: 1.8vw;
+    }
+
+    .quizSpace .quiz #playAgain {
+        font-size: 1.8vw;
     }
 
     #timerBar {
@@ -361,9 +377,17 @@ button {
         width: 380px;
         padding: 5px;
     }
+    
+    .quizSpace .beginBtn {
+        font-size: 2.3vw;
+    }
+    
+    .quizSpace .quiz h2 {
+        font-size: 2.3vw;
+    }
 
     .quizSpace .quiz p {
-        font-size: 2vw;
+        font-size: 1.7vw;
     }
     
     .quizSpace .quiz .questionAnswer {
@@ -377,6 +401,10 @@ button {
 
     .gameContent {
         width: 160px;
+    }
+
+    .gameContent span {
+        font-size: 1.5vw;
     }
 }
 /* END ADJUSTMENTS FOR TABLETS AND BELOW */
@@ -396,6 +424,26 @@ button {
         width: 260px;
         padding: 5px;
     }
+    
+    .quizSpace .beginBtn {
+        font-size: 3vw;
+    }
+    
+    .quizSpace .quiz h2 {
+        font-size: 3vw;
+    }
+
+    .quizSpace .quiz p {
+        font-size: 2.4vw;
+    }
+
+    .quizSpace .quiz .highScoreListItem p {
+        font-size: 2.4vw;
+    }
+
+    .quizSpace .quiz #playAgain {
+        font-size: 2.4vw;
+    }
 
     #timerBar {
         width: 260px;
@@ -408,5 +456,10 @@ button {
     
     .gameContent div {
         font-size: 1vw;
+    }
+
+    .charBtn {
+        width: 40px;
+        height: 40px;
     }
 }
